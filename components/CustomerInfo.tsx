@@ -35,9 +35,9 @@ function CustomerInfo({ form }: { form: UseFormReturn<any> }) {
                                         <SelectValue placeholder="Client type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="apple">Individual</SelectItem>
-                                        <SelectItem value="banana">Business</SelectItem>
-                                        <SelectItem value="orange">Company</SelectItem>
+                                        <SelectItem value="Individual">Individual</SelectItem>
+                                        <SelectItem value="Business">Business</SelectItem>
+                                        <SelectItem value="Company">Company</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
