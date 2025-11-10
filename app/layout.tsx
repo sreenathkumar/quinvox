@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 import { InvoiceProvider } from '@/contexts/InvoiceProvider';
 
 export const metadata: Metadata = {
-  title: 'QuInvox - Free Invoice Generator',
-  description: 'Instantly create and download professional invoices for free.',
+  title: 'Quinvox | Free Online Invoice Creator | Quick Invoice Tool',
+  description: 'Create professional invoices fast with Quinvox — the Quick Invoice tool. Free online invoice creator and PDF maker for businesses and freelancers.',
 };
 
 export default function RootLayout({
