@@ -1,12 +1,9 @@
-"use client";
-
-import Link from 'next/link';
+'use client';
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react';
-import { signOut } from 'firebase/auth';
+import Link from 'next/link';
 
-import { useAuth } from '@/contexts/AuthProvider';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { auth } from '@/lib/firebase';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,20 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/hooks/use-toast';
+import authClient from '@/lib/auth-client';
 
-export function Header() {
-  const { user } = useAuth();
-  const { toast } = useToast();
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      toast({ title: "Signed out successfully." });
-    } catch (error) {
-      toast({ title: "Error signing out", description: (error as Error).message, variant: "destructive" });
-    }
+function Header() {
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+
+  const handleLogout = async () => {
+    console.log('Logging out user...');
+    await authClient.signOut();
   };
 
   return (
@@ -45,7 +38,7 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || ''} />
+                    <AvatarImage src={user.image || undefined} alt={user.name || user.email || ''} />
                     <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
                   </Avatar>
                 </Button>
@@ -53,12 +46,12 @@ export function Header() {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.displayName}</p>
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
                     <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
+                <DropdownMenuItem onClick={handleLogout} >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -66,16 +59,10 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="space-x-2">
-              <Button asChild variant="ghost">
+              <Button asChild>
                 <Link href="/login">
                   <LogIn className="mr-2 h-4 w-4" />
                   Login
-                </Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  Sign Up
                 </Link>
               </Button>
             </div>
@@ -85,3 +72,5 @@ export function Header() {
     </header>
   );
 }
+
+export default Header;

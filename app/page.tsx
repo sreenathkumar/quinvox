@@ -3,7 +3,7 @@
 import AdditonalInfo from '@/components/AdditonalInfo';
 import BillerInfo from '@/components/BillerInfo';
 import CustomerInfo from '@/components/CustomerInfo';
-import { Header } from '@/components/Header';
+import Header from '@/components/Header';
 import ItemsInfo from '@/components/ItemsInfo';
 import MetaInfo from '@/components/MetaInfo';
 import Preview from '@/components/Preview';
