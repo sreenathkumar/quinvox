@@ -2,7 +2,7 @@
 
 import { type ReactNode, createContext, useContext, useRef } from "react";
 import { useStore } from "zustand";
-import createInvoiceStore, { InvoiceStore } from "@/lib/stores/invoice-store";
+import createInvoiceStore, { InvoiceStoreType } from "@/lib/stores/invoice-store";
 
 type InvoiceStoreApi = ReturnType<typeof createInvoiceStore>;
 
@@ -32,5 +32,5 @@ export const useInvoiceStore = () => {
     }
     const { invoices, addInvoice, removeInvoice } = useStore(store, state => state);
 
-    return { invoices, addInvoice, removeInvoice } as InvoiceStore;
+    return { invoices, addInvoice, removeInvoice } as InvoiceStoreType;
 }

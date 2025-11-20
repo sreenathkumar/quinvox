@@ -2,14 +2,14 @@ import { createStore } from 'zustand/vanilla'
 import { persist } from 'zustand/middleware'
 import { Invoice } from '../definitions'
 
-export interface InvoiceStore {
+export interface InvoiceStoreType {
     invoices: Array<Invoice>
     addInvoice: (invoice: Invoice) => void
     removeInvoice: (invoiceId: string) => void
     clearInvoices: () => void
 }
 
-const createInvoiceStore = () => createStore<InvoiceStore>()(
+const createInvoiceStore = () => createStore<InvoiceStoreType>()(
     persist(
         (set, get) => ({
             invoices: [] as Array<Invoice>,
@@ -25,7 +25,6 @@ const createInvoiceStore = () => createStore<InvoiceStore>()(
         }),
         {
             name: 'invoices',
-
         }
     )
 )
