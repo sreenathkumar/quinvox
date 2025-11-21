@@ -22,6 +22,8 @@ function Header() {
   const handleLogout = async () => {
     console.log('Logging out user...');
     await authClient.signOut();
+    localStorage.removeItem('invoices');
+    localStorage.removeItem('pending-tasks');
   };
 
   return (

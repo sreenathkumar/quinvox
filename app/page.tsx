@@ -13,13 +13,14 @@ import { Form } from '@/components/ui/form';
 import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 import { useToast } from '@/hooks/use-toast';
 import { invoiceSchema } from '@/lib/definitions';
+import syncWithCloud from '@/lib/sync-invoice';
 import { InvoiceFormData } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Plus,
   Save
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
 
@@ -29,12 +30,13 @@ const defaultValues: InvoiceFormData = {
   billerAddress: '',
   billerEmail: '',
   billerPhone: '',
+  clientType: 'Individual',
   clientName: '',
   clientAddress: '',
   clientEmail: '',
   date: new Date(),
   dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
-  items: [{ id: '', description: '', quantity: 1, unit_price: 12 }],
+  items: [{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 12 }],
   tax: 0,
   notes: '',
 };
@@ -73,7 +75,7 @@ export default function Home() {
   }, [watchedItems, watchedTax]);
 
   const onSave: SubmitHandler<InvoiceFormData> = (data) => {
-    console.log("saving invoice");
+    console.log("saving invoice", data);
     addInvoice(data)
 
     toast({
@@ -105,6 +107,11 @@ export default function Home() {
       variant: 'destructive',
     });
   };
+
+  // sync pending tasks with cloud on load
+  useEffect(() => {
+    syncWithCloud();
+  }, [])
 
 
   return (

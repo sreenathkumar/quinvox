@@ -18,6 +18,7 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
+  invoices      Invoice[]
 
   @@unique([email])
   @@map("user")
@@ -66,4 +67,39 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+model Invoice {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   
+  user          User     @relation(fields:[userId], references:[id])
+  invoiceNumber String   @unique
+  billerName    String
+  billerEmail   String
+  billerPhone   String?
+  billerAddress String
+  clientType    ClientType
+  clientName    String
+  clientAddress String
+  clientEmail   String
+  date          DateTime
+  dueDate       DateTime
+  items         Item[]
+  tax           Float?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+}
+
+enum ClientType{
+  Individual
+  Business
+  Company
+}
+
+type Item{
+  id          String
+  description String?
+  quantity    Int 
+  unit_price  Float
 }

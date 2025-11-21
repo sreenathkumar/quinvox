@@ -37,7 +37,9 @@ function ItemsInfo({ form }: { form: UseFormReturn<InvoiceFormData> }) {
                     variant="outline"
                     size="sm"
                     className="mt-4 w-full"
-                    onClick={() => append(defaultItem)}
+                    onClick={() => append({
+                        id: crypto.randomUUID(), ...defaultItem,
+                    })}
                 >
                     <Plus className="mr-2 h-4 w-4" /> Add Item
                 </Button>
