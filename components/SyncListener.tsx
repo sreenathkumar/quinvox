@@ -2,12 +2,17 @@
 
 import getInvoices from "@/actions/getInvoices";
 import { useInvoiceStore } from "@/contexts/InvoiceProvider";
+import authClient from "@/lib/auth-client";
 import usePendingTask from "@/lib/stores/pending-task-store";
 import triggerSync from "@/lib/sync-engine";
 import { useEffect } from "react";
 
 function SyncListener() {
     const { invoices, initInvoices } = useInvoiceStore();
+    const { data: session } = authClient.useSession();
+    const user = session?.user;
+
+
     // Run syncWithCloud on loading the app
     useEffect(() => {
         async function initCloudInvioces() {
@@ -27,8 +32,11 @@ function SyncListener() {
             console.log('SyncListener: App is online on load, syncing pending tasks...');
             triggerSync();
 
-            //get cloud invoices 
-            initCloudInvioces();
+            if (user) {
+                //get cloud invoices 
+                initCloudInvioces();
+            }
+
         }
     }, []);
 
