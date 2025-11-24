@@ -1,15 +1,9 @@
-'use client';
-
 import { AlertCircle, Home } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import ErrorMessage from "./components/error-message";
+import { Suspense } from "react";
 
 function ErrorPage() {
-    const params = useSearchParams();
-
-    const errorCode = params.get('error') || 'Unknown Error';
-    const errorMessage = params.get('error_description') || 'An unknown error occurred.';
-
     return (
         <main className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
             <div className="w-full max-w-md">
@@ -19,15 +13,9 @@ function ErrorPage() {
                             <AlertCircle className="w-8 h-8 text-destructive" />
                         </div>
                     </div>
-
-                    <h1 className="text-4xl font-bold text-foreground text-center mb-2">
-                        {errorCode}
-                    </h1>
-
-                    <h2 className="text-xl font-semibold text-foreground text-center mb-3">
-                        {errorMessage}
-                    </h2>
-
+                    <Suspense fallback={null}>
+                        <ErrorMessage />
+                    </Suspense>
                     <div className="flex flex-col gap-3">
                         <Link
                             href="/"
@@ -39,15 +27,6 @@ function ErrorPage() {
 
                     </div>
                 </div>
-
-                {/* Error Details */}
-                {errorMessage && (
-                    <div className="mt-6 bg-muted/50 border border-border rounded-lg p-4">
-                        <p className="text-xs text-muted-foreground font-mono break-words">
-                            <span className="font-semibold">Details:</span> {errorMessage}
-                        </p>
-                    </div>
-                )}
             </div>
         </main>
     )
