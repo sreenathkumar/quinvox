@@ -59,7 +59,7 @@ function BillerInfo({ form }: { form: UseFormReturn<InvoiceFormData> }) {
             <FormItem>
               <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input placeholder="+1 (555) 123-4567" {...field} />
+                <Input placeholder="+1 (555) 123-4567" {...field} value={field.value ?? ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
