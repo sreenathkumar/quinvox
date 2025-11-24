@@ -27,19 +27,46 @@ async function syncDatabase(task: { id: string, type: string, payload: any }) {
                 } else {
                     throw new Error('Invoice creation failed');
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error creating invoice:', error);
-                return { success: false, message: 'Failed to create invoice' };
+                return { success: false, message: error?.message || 'Invoice creation failed' };
             }
 
-
         case 'update':
-            // Logic to update the record in the database
-            return { success: true, message: 'Invoice updated successfully' };
+            try {
+                // Logic to update the record in the database
+                const result = await prisma.invoice.update({
+                    where: { invoiceNumber: task.payload?.invoiceNumber },
+                    data: task.payload,
+                });
+
+                if (!result) {
+                    throw new Error('Invoice update failed');
+                }
+
+                return { success: true, message: 'Invoice updated successfully' };
+
+            } catch (error: any) {
+                console.error('Error updating invoice:', error);
+                return { success: false, message: error?.message || 'Invoice update failed' };
+            }
+
         case 'delete':
-            // Logic to delete the record from the database
-            console.log('Deleting record with ID:', task.payload.id);
-            return { success: true, message: `Invoice(#${task.payload.id}) deleted successfully` };
+            try {
+                // Logic to delete the record from the database
+                const result = await prisma.invoice.delete({
+                    where: { invoiceNumber: task.payload?.invoiceNumber },
+                });
+
+                if (!result) {
+                    throw new Error('Invoice deletion failed');
+                }
+
+                return { success: true, message: `Invoice(#${task.payload?.invoiceNumber}) deleted successfully` };
+            } catch (error: any) {
+                console.error('Error deleting invoice:', error);
+                return { success: false, message: error?.message || 'Invoice deletion failed' };
+            }
         default:
             return { success: false, message: 'Unknown task type' };
     }

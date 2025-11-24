@@ -87,7 +87,7 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
                                     <p className="text-sm text-black font-semibold mb-2">Payable: {formatCurrency(total)}</p>
                                     <p className="text-xs text-gray-600">Dues {format(form.watch('dueDate'), 'P')}</p>
                                     <p className="text-xs text-gray-600">Issued {format(form.watch('date'), 'P')}</p>
-                                    <p className="text-xs text-gray-600">Ref. {form.getValues('invoiceNumber')}</p>
+                                    <p className="text-xs text-gray-600" suppressHydrationWarning={true} >Ref. {form.getValues('invoiceNumber')}</p>
                                 </div>
                                 <div className='space-y-1'>
                                     <p className="text-sm font-semibold text-black mb-2">Billed to</p>

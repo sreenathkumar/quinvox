@@ -1,8 +1,8 @@
 'use client';
 
+import createInvoiceStore, { InvoiceStoreType } from "@/lib/stores/invoice-store";
 import { type ReactNode, createContext, useContext, useRef } from "react";
 import { useStore } from "zustand";
-import createInvoiceStore, { InvoiceStoreType } from "@/lib/stores/invoice-store";
 
 type InvoiceStoreApi = ReturnType<typeof createInvoiceStore>;
 
@@ -30,7 +30,7 @@ export const useInvoiceStore = () => {
     if (!store) {
         throw new Error("useInvoiceStore must be used within an InvoiceProvider");
     }
-    const { invoices, addInvoice, removeInvoice } = useStore(store, state => state);
+    const { invoices, initInvoices, addInvoice, removeInvoice, updateInvoice, clearInvoices } = useStore(store, state => state);
 
-    return { invoices, addInvoice, removeInvoice } as InvoiceStoreType;
+    return { invoices, initInvoices, addInvoice, removeInvoice, updateInvoice, clearInvoices } as InvoiceStoreType;
 }

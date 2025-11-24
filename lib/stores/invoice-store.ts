@@ -4,8 +4,10 @@ import { Invoice } from '../definitions'
 import usePendingTask from './pending-task-store'
 
 export interface InvoiceStoreType {
-    invoices: Array<Invoice>
+    invoices: Array<Invoice>,
+    initInvoices: (invoices: Array<Invoice>) => void,
     addInvoice: (invoice: Invoice) => void
+    updateInvoice: (id: string, data: Invoice) => void
     removeInvoice: (invoiceId: string) => void
     clearInvoices: () => void
 }
@@ -14,6 +16,7 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
     persist(
         (set, get) => ({
             invoices: [] as Array<Invoice>,
+            initInvoices: (invoices: Array<Invoice>) => set({ invoices }),
 
             addInvoice: (invoice: Invoice) => {
                 const metadata = {
@@ -31,22 +34,58 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
 
                 //add to queue for syncing with cloud
                 usePendingTask.getState().addTask({
-                    id: crypto.randomUUID(),
+                    id: invoice.invoiceNumber!,
                     type: 'create',
                     payload: updatedInvoice,
                 });
 
             },
 
+            updateInvoice: (invoiceNumber: string, data: Invoice) => {
+                set((state) => {
+                    const updatedAt = new Date().toISOString();
+
+                    return {
+                        invoices: state.invoices.map((inv) => inv.invoiceNumber === invoiceNumber ? { ...data, updatedAt } : inv),
+                    }
+                });
+
+                // check if there's already a pending task for this invoice
+                const pendingTask = usePendingTask.getState().tasks;
+                const existingTask = pendingTask.find(task => task.id === invoiceNumber);
+
+                if (existingTask) {
+                    //update the existing task's payload
+                    usePendingTask.getState().updateTask(existingTask.id, {
+                        ...data,
+                        updatedAt: new Date().toISOString(),
+                    });
+                } else {
+                    //add task for updating invoice in database
+                    usePendingTask.getState().addTask({
+                        id: invoiceNumber,
+                        type: 'update',
+                        payload: { ...data, updatedAt: new Date().toISOString() },
+                    });
+                }
+            },
+
             removeInvoice: (invoiceId: string) => {
                 //check if the invoice is in pending tasks
                 const pendingTask = usePendingTask.getState().tasks;
-                const isPending = pendingTask.find(task => task.payload.invoiceNumber === invoiceId);
+                const isPending = pendingTask.find(task => task.id === invoiceId);
 
                 //if it is pending, remove it from the pending tasks
                 if (isPending) {
                     usePendingTask.getState().removeTask(isPending.id);
                 }
+
+                //add delete task to pending tasks
+                usePendingTask.getState().addTask({
+                    id: invoiceId,
+                    type: 'delete',
+                    payload: { invoiceNumber: invoiceId },
+                });
 
                 //remove from the invoice store
                 set({
@@ -55,6 +94,7 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
                     ),
                 });
             },
+
             clearInvoices: () => set({ invoices: [] }),
         }),
         {

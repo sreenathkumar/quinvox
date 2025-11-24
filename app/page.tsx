@@ -13,7 +13,6 @@ import { Form } from '@/components/ui/form';
 import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 import { useToast } from '@/hooks/use-toast';
 import { invoiceSchema } from '@/lib/definitions';
-import syncWithCloud from '@/lib/sync-invoice';
 import { InvoiceFormData } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -22,7 +21,6 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
-
 
 const defaultValues: InvoiceFormData = {
   invoiceNumber: `INV-${new Date().getTime().toString().slice(-6)}`,
@@ -48,7 +46,7 @@ export default function Home() {
   });
 
   const { toast } = useToast();
-  const { addInvoice, removeInvoice } =
+  const { invoices, addInvoice, removeInvoice, updateInvoice } =
     useInvoiceStore();
   const [activeInvoiceId, setActiveInvoiceId] = useState<string | null>(null);
 
@@ -75,8 +73,15 @@ export default function Home() {
   }, [watchedItems, watchedTax]);
 
   const onSave: SubmitHandler<InvoiceFormData> = (data) => {
-    console.log("saving invoice", data);
-    addInvoice(data)
+    const existingInvoice = invoices.find(inv => inv.invoiceNumber === data.invoiceNumber);
+
+    if (existingInvoice) {
+      if (!window.confirm('An invoice with this number already exists. Do you want to update it?')) return;
+
+      updateInvoice(data.invoiceNumber!, data);
+    } else {
+      addInvoice(data)
+    }
 
     toast({
       title: `Invoice ${data.invoiceNumber} has been saved locally.`,
@@ -110,7 +115,7 @@ export default function Home() {
 
   // sync pending tasks with cloud on load
   useEffect(() => {
-    syncWithCloud();
+    //syncWithCloud();
   }, [])
 
 

@@ -13,17 +13,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import authClient from '@/lib/auth-client';
+import usePendingTask from '@/lib/stores/pending-task-store';
+import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 
 
 function Header() {
   const { data: session } = authClient.useSession();
   const user = session?.user;
+  const { clearInvoices } = useInvoiceStore()
+  const { clearTasks } = usePendingTask.getState();
 
   const handleLogout = async () => {
-    console.log('Logging out user...');
     await authClient.signOut();
-    localStorage.removeItem('invoices');
-    localStorage.removeItem('pending-tasks');
+    //clear the pending tasks on logout
+    clearTasks();
+    clearInvoices();
+    console.log('User logged out and pending tasks cleared.');
   };
 
   return (

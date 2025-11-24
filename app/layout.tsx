@@ -1,9 +1,9 @@
+import { Toaster } from '@/components/ui/toaster';
+import { InvoiceProvider } from '@/contexts/InvoiceProvider';
+import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import './globals.css';
-import { AuthProvider } from '@/contexts/AuthProvider';
-import { Toaster } from '@/components/ui/toaster';
-import { cn } from '@/lib/utils';
-import { InvoiceProvider } from '@/contexts/InvoiceProvider';
+import SyncListener from '@/components/SyncListener';
 
 export const metadata: Metadata = {
   title: 'Quinvox | Free Online Invoice Creator | Quick Invoice Tool',
@@ -26,12 +26,11 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased min-h-screen')}>
-        <AuthProvider>
-          <InvoiceProvider>
-            {children}
-          </InvoiceProvider>
-          <Toaster />
-        </AuthProvider>
+        <InvoiceProvider>
+          <SyncListener />
+          {children}
+        </InvoiceProvider>
+        <Toaster />
       </body>
     </html>
   );
