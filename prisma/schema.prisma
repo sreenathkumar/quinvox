@@ -99,7 +99,7 @@ enum ClientType{
 
 type Item{
   id          String
-  description String?
+  description String
   quantity    Int 
   unit_price  Float
 }
