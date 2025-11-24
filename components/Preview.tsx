@@ -29,7 +29,7 @@ interface PreviewProps {
         quantity: number;
         unit_price: number;
     }>;
-    watchedTax?: number;
+    watchedTax?: number | null;
 }
 
 function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }: PreviewProps) {
