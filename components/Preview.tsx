@@ -104,7 +104,7 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
                         </div>
 
                         {/* Items Table */}
-                        <div className="mb-8 grid md:grid-cols-[116px_repeat(2,minmax(0,1fr))]">
+                        <div className="mb-8 grid md:grid-cols-[20%_repeat(2,minmax(0,1fr))]">
                             <div className='md:col-start-2 md:col-span-2 text-sm md:pl-4 md:border-l-[2px] md:border-[#895af6]'>
                                 <table className="w-full mb-8 border-b border-gray-200">
                                     <thead>
@@ -142,7 +142,7 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
                         </div>
 
                         {/* Payment Details Section */}
-                        <div className='grid md:grid-cols-[116px_repeat(2,minmax(0,1fr))] mt-24'>
+                        <div className='grid md:grid-cols-[20%_repeat(2,minmax(0,1fr))] mt-24'>
                             <div className="py-1 md:col-start-2 md:col-span-2 text-sm md:pl-4 md:border-l-[2px] md:border-[#895af6]">
                                 <div className='flex justify-between gap-4'>
                                     <div>
