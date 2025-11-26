@@ -120,45 +120,42 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Header />
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+    <main className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
 
-          <div className="lg:col-span-3 space-y-8">
-            <Form {...form} >
-              <form
-                id="invoice-form"
-                className="space-y-8"
-                onSubmit={form.handleSubmit(onSave)}
-              >
-                <MetaInfo form={form} />
-                <ItemsInfo form={form} />
-                <CustomerInfo form={form} />
-                <BillerInfo form={form} />
-                <div className="p-6 mt-4 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col gap-6">
-                  <AdditonalInfo form={form} />
-                  <div className='flex items-center gap-4'>
-                    <Button type="submit" form="invoice-form" className="bg-accent text-accent-foreground hover:bg-accent/90 grow">
-                      <Save className="mr-2 h-4 w-4" /> {activeInvoiceId ? 'Update' : 'Save'} Invoice
-                    </Button>
-                    <Button className='grow' type="button" variant="outline" onClick={handleCreateNew}>
-                      <Plus className="mr-2 h-4 w-4" /> Create New
-                    </Button>
-                  </div>
+        <div className="lg:col-span-3 space-y-8">
+          <Form {...form} >
+            <form
+              id="invoice-form"
+              className="space-y-8"
+              onSubmit={form.handleSubmit(onSave)}
+            >
+              <MetaInfo form={form} />
+              <ItemsInfo form={form} />
+              <CustomerInfo form={form} />
+              <BillerInfo form={form} />
+              <div className="p-6 mt-4 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col gap-6">
+                <AdditonalInfo form={form} />
+                <div className='flex items-center gap-4'>
+                  <Button type="submit" form="invoice-form" className="bg-accent text-accent-foreground hover:bg-accent/90 grow">
+                    <Save className="mr-2 h-4 w-4" /> {activeInvoiceId ? 'Update' : 'Save'} Invoice
+                  </Button>
+                  <Button className='grow' type="button" variant="outline" onClick={handleCreateNew}>
+                    <Plus className="mr-2 h-4 w-4" /> Create New
+                  </Button>
                 </div>
-              </form>
-            </Form>
-            <RecentInvoices onLoadInvoice={handleLoadInvoice} onDeleteInvoice={handleDeleteInvoice} />
-          </div>
+              </div>
+            </form>
+          </Form>
+          <RecentInvoices onLoadInvoice={handleLoadInvoice} onDeleteInvoice={handleDeleteInvoice} />
+        </div>
 
-          <div className="lg:col-span-3">
-            <div className="sticky top-8 space-y-4">
-              <Preview form={form} subtotal={subtotal} taxAmount={taxAmount} total={total} watchedItems={watchedItems} watchedTax={watchedTax} />
-            </div>
+        <div className="lg:col-span-3">
+          <div className="sticky top-8 space-y-4">
+            <Preview form={form} subtotal={subtotal} taxAmount={taxAmount} total={total} watchedItems={watchedItems} watchedTax={watchedTax} />
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

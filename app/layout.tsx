@@ -1,9 +1,10 @@
+import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { InvoiceProvider } from '@/contexts/InvoiceProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import './globals.css';
 import SyncListener from '@/components/SyncListener';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'Quinvox | Free Online Invoice Creator | Quick Invoice Tool',
@@ -25,9 +26,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn('font-body antialiased min-h-screen')}>
+      <body className={cn('font-body antialiased min-h-screen bg-background text-foreground flex flex-col')}>
         <InvoiceProvider>
           <SyncListener />
+          <Header />
           {children}
         </InvoiceProvider>
         <Toaster />
