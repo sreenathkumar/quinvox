@@ -1,0 +1,69 @@
+import { Card } from "@/components/ui/card"
+import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
+import ContactForm from "./components/contact-form"
+import ContactInfoItem from "./components/contact-info-item"
+import Link from "next/link";
+
+
+function ContactPage() {
+    return (
+        <main className="min-h-screen bg-background flex flex-col py-16">
+            <div className="max-w-6xl mx-auto px-4 flex flex-col flex-1 sm:px-6 lg:px-8">
+
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl text-foreground sm:text-5xl font-extrabold leading-tight">
+                        Get In Touch
+                    </h1>
+                    <p className="mt-4 text-muted-foreground text-xl max-w-2xl mx-auto">
+                        We're here to help you with any questions about invoicing, payments, or upgrading your account.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+                    <div className="lg:col-span-2">
+                        <Card className="p-6 md:p-10">
+                            <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
+                                Send us a message <MessageSquare className="w-6 h-6 ml-3 text-accent" />
+                            </h2>
+                            <ContactForm />
+                        </Card>
+                    </div>
+
+                    <div className="lg:col-span-1 space-y-8 mt-4 lg:mt-0">
+                        <Card className=" text-white shadow-xl border p-6 md:p-8 space-y-6">
+                            <h3 className="text-xl font-bold border-b border-white/20 pb-4">
+                                General Support
+                            </h3>
+                            <ContactInfoItem
+                                icon={Mail}
+                                title="Email Us"
+                                content={<a href="mailto:admin@pixelatedcode.com" className="hover:underline">admin@pixelatedcode.com</a>}
+                            />
+                            <ContactInfoItem
+                                icon={Phone}
+                                title="Call Us"
+                                content="Mon-Fri, 9am - 5pm GMT"
+                            />
+                            <ContactInfoItem
+                                icon={MapPin}
+                                title="Visit Us"
+                                content="Khulna, Bangladesh"
+                            />
+                        </Card>
+                    </div>
+                </div>
+
+                <div className="mt-auto">
+                    <h3 className="text-lg font-bold text-foreground mb-3">Quick Links</h3>
+                    <ul className="space-y-2 text-muted-foreground flex flex-col">
+                        <Link href={'#'}>FAQ Center &rarr;</Link>
+                        <Link href={'#'}>Technical Documentation &rarr;</Link>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    )
+}
+
+export default ContactPage
