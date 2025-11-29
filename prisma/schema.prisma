@@ -103,3 +103,13 @@ type Item{
   quantity    Int 
   unit_price  Float
 }
+
+model UserQuery{
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

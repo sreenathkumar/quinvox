@@ -1,5 +1,14 @@
 import { string, z } from "zod";
 
+const ALLOWED_DOMAINS = [
+  "gmail.com",
+  "hotmail.com",
+  "outlook.com",
+  "yahoo.com",
+  "icloud.com",
+  "live.com",
+];
+
 export const itemSchema = z.object({
   id: string().optional().nullable(),
   description: z.string().min(1, { message: "Description is required." }),
@@ -30,5 +39,25 @@ export const invoiceSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
+export const contactFormSchema = z.object({
+  name: z.string().min(1, { message: "Name is required." }),
+  email: z.string().email({ message: "Invalid email address." }).min(1, { message: "Email is required." }).refine(
+    (email) => {
+      const domain = email.split('@').pop()?.toLowerCase();
+
+      return domain && ALLOWED_DOMAINS.includes(domain);
+    },
+    {
+      message: "Please use your primary email domain (e.g., Gmail, Outlook, Yahoo, Hotmail, Icloud, Live).",
+    }
+  ),
+  subject: z.string().min(10, { message: "Subject must be 10 characters." }),
+  message: z.string().min(20, { message: "Please describe your project..." })
+    .refine((val) => !/https?:\/\//i.test(val), {
+      message: "Please do not include links in your initial message."
+    }),
+});
+
 export type Invoice = z.infer<typeof invoiceSchema>;
 export type InvoiceItem = z.infer<typeof itemSchema>;
+export type ContactFormData = z.infer<typeof contactFormSchema>;
