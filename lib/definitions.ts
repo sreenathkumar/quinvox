@@ -58,6 +58,6 @@ export const contactFormSchema = z.object({
     }),
 });
 
-export type Invoice = z.infer<typeof invoiceSchema>;
+export type InvoiceData = z.infer<typeof invoiceSchema>;
 export type InvoiceItem = z.infer<typeof itemSchema>;
 export type ContactFormData = z.infer<typeof contactFormSchema>;

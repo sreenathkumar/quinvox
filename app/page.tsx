@@ -3,7 +3,6 @@
 import AdditonalInfo from '@/components/AdditonalInfo';
 import BillerInfo from '@/components/BillerInfo';
 import CustomerInfo from '@/components/CustomerInfo';
-import Header from '@/components/Header';
 import ItemsInfo from '@/components/ItemsInfo';
 import MetaInfo from '@/components/MetaInfo';
 import Preview from '@/components/Preview';
@@ -12,17 +11,13 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 import { useToast } from '@/hooks/use-toast';
-import { invoiceSchema } from '@/lib/definitions';
-import { InvoiceFormData } from '@/types';
+import { InvoiceData, invoiceSchema } from '@/lib/definitions';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Plus,
-  Save
-} from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Plus, Save } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
-const defaultValues: InvoiceFormData = {
+const defaultValues: InvoiceData = {
   invoiceNumber: `INV-${new Date().getTime().toString().slice(-6)}`,
   billerName: '',
   billerAddress: '',
@@ -40,7 +35,7 @@ const defaultValues: InvoiceFormData = {
 };
 
 export default function Home() {
-  const form = useForm<InvoiceFormData>({
+  const form = useForm<InvoiceData>({
     resolver: zodResolver(invoiceSchema),
     defaultValues,
   });
@@ -72,7 +67,7 @@ export default function Home() {
     return { subtotal, taxAmount, total };
   }, [watchedItems, watchedTax]);
 
-  const onSave: SubmitHandler<InvoiceFormData> = (data) => {
+  const onSave: SubmitHandler<InvoiceData> = (data) => {
     const existingInvoice = invoices.find(inv => inv.invoiceNumber === data.invoiceNumber);
 
     if (existingInvoice) {
@@ -93,7 +88,7 @@ export default function Home() {
     setActiveInvoiceId(null);
   };
 
-  const handleLoadInvoice = (invoice: InvoiceFormData) => {
+  const handleLoadInvoice = (invoice: InvoiceData) => {
     form.reset({
       ...invoice,
       date: new Date(invoice.date),
@@ -112,11 +107,6 @@ export default function Home() {
       variant: 'destructive',
     });
   };
-
-  // sync pending tasks with cloud on load
-  useEffect(() => {
-    //syncWithCloud();
-  }, [])
 
 
   return (

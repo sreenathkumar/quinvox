@@ -9,9 +9,10 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/f
 import { Input } from "./ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { UseFormReturn } from "react-hook-form"
-import { InvoiceFormData } from "@/types"
+import { InvoiceData } from "@/lib/definitions"
 
-function MetaInfo({ form }: { form: UseFormReturn<InvoiceFormData> }) {
+
+function MetaInfo({ form }: { form: UseFormReturn<InvoiceData> }) {
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <FormField

@@ -1,13 +1,13 @@
 import { persist } from 'zustand/middleware'
 import { createStore } from 'zustand/vanilla'
-import { Invoice } from '../definitions'
 import usePendingTask from './pending-task-store'
+import { InvoiceData } from '../definitions'
 
 export interface InvoiceStoreType {
-    invoices: Array<Invoice>,
-    initInvoices: (invoices: Array<Invoice>) => void,
-    addInvoice: (invoice: Invoice) => void
-    updateInvoice: (id: string, data: Invoice) => void
+    invoices: Array<InvoiceData>,
+    initInvoices: (invoices: Array<InvoiceData>) => void,
+    addInvoice: (invoice: InvoiceData) => void
+    updateInvoice: (id: string, data: InvoiceData) => void
     removeInvoice: (invoiceId: string) => void
     clearInvoices: () => void
 }
@@ -15,10 +15,10 @@ export interface InvoiceStoreType {
 const createInvoiceStore = () => createStore<InvoiceStoreType>()(
     persist(
         (set, get) => ({
-            invoices: [] as Array<Invoice>,
-            initInvoices: (invoices: Array<Invoice>) => set({ invoices }),
+            invoices: [] as Array<InvoiceData>,
+            initInvoices: (invoices: Array<InvoiceData>) => set({ invoices }),
 
-            addInvoice: (invoice: Invoice) => {
+            addInvoice: (invoice: InvoiceData) => {
                 const metadata = {
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
@@ -41,7 +41,7 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
 
             },
 
-            updateInvoice: (invoiceNumber: string, data: Invoice) => {
+            updateInvoice: (invoiceNumber: string, data: InvoiceData) => {
                 set((state) => {
                     const updatedAt = new Date().toISOString();
 

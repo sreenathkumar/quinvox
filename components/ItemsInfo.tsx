@@ -5,8 +5,8 @@ import SingleItem from "./SingleItem"
 import { Button } from "./ui/button"
 import { FormMessage } from "./ui/form"
 import { useFieldArray, UseFormReturn } from "react-hook-form"
-import { InvoiceFormData } from "@/types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { InvoiceData } from "@/lib/definitions"
 
 const defaultItem = {
     description: '',
@@ -14,7 +14,7 @@ const defaultItem = {
     unit_price: 0,
 }
 
-function ItemsInfo({ form }: { form: UseFormReturn<InvoiceFormData> }) {
+function ItemsInfo({ form }: { form: UseFormReturn<InvoiceData> }) {
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: 'items',

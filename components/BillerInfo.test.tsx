@@ -2,26 +2,26 @@ import { render, screen } from "@testing-library/react"
 import { describe, test, expect } from "vitest";
 import BillerInfo from "./BillerInfo";
 import { FormProvider, useForm } from "react-hook-form";
-import { InvoiceFormData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { invoiceSchema } from "@/lib/definitions";
-const defaultValues: InvoiceFormData = {
+import { InvoiceData, invoiceSchema } from "@/lib/definitions";
+const defaultValues: InvoiceData = {
     invoiceNumber: `INV-${new Date().getTime().toString().slice(-6)}`,
     billerName: '',
     billerAddress: '',
     billerEmail: '',
     billerPhone: '',
+    clientType: 'Individual',
     clientName: '',
     clientAddress: '',
     clientEmail: '',
     date: new Date(),
     dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
-    items: [{ id: '', description: '', quantity: 1, unitPrice: 0 }],
+    items: [{ id: '', description: '', quantity: 1, unit_price: 0 }],
     tax: 0,
     notes: '',
 };
 function Wrapper() {
-    const form = useForm<InvoiceFormData>({
+    const form = useForm<InvoiceData>({
         resolver: zodResolver(invoiceSchema),
         defaultValues
     });

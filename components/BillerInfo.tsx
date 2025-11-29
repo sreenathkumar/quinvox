@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from "./ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { InvoiceFormData } from "@/types";
 import { Textarea } from "./ui/textarea";
+import { InvoiceData } from "@/lib/definitions";
 
-function BillerInfo({ form }: { form: UseFormReturn<InvoiceFormData> }) {
+function BillerInfo({ form }: { form: UseFormReturn<InvoiceData> }) {
 
   return (
     <Card>
