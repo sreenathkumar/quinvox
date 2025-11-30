@@ -16,8 +16,10 @@ function SyncListener() {
 
     // Run syncWithCloud on loading the app
     useEffect(() => {
-        if (!user) { return }
-        if (initializedRef.current) { return }
+        // Only run for paid users
+        if (!user || user.plan === 'free') { return };
+
+        if (initializedRef.current) { return };
 
         async function initCloudInvioces() {
             console.log('SyncListener: Checking for cloud invoices to initialize...');

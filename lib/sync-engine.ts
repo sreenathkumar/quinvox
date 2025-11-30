@@ -1,6 +1,7 @@
 import syncDatabase from "@/actions/syncDB";
 import usePendingTask from "./stores/pending-task-store";
 import { toast } from "@/hooks/use-toast";
+import authClient from "./auth-client";
 
 let syncing = false;
 let syncDebounce: any;
@@ -49,7 +50,12 @@ async function syncWithCloud() {
 }
 
 // debounce multiple calls within short time    
-function triggerSync() {
+async function triggerSync() {
+    const { data: session } = await authClient.getSession();
+    const user = session?.user;
+
+    if (!user || user.plan === 'free') return;
+
     if (navigator.onLine === false) return; // do not schedule sync when offline
 
     clearTimeout(syncDebounce);
