@@ -23,5 +23,11 @@ export const auth = betterAuth({
                 throw ctx.redirect('/error' + (query ? `?error=${query.error}&error_description=${query.error_description}` : ''));
             }
         })
+    },
+    user: {
+        additionalFields: {
+            plan: { type: 'string', defaultValue: 'free', input: false },
+            planExpires: { type: 'date', defaultValue: null, input: false },
+        },
     }
 });
