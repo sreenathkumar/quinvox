@@ -77,10 +77,6 @@ export default function Home() {
     } else {
       addInvoice(data)
     }
-
-    toast({
-      title: `Invoice ${data.invoiceNumber} has been saved locally.`,
-    });
   }
 
   const handleCreateNew = () => {
