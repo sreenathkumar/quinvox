@@ -18,7 +18,7 @@ function NavMenu() {
     }
 
     return (
-        <div className='flex gap-6'>
+        <div className='flex gap-6 itmes-center'>
             {
                 !isMobile ? <Menu layout='horizontal' /> :
                     <Sheet open={isMenuOpen} onOpenChange={handleMenu}>
@@ -42,7 +42,7 @@ function NavMenu() {
 function Menu({ layout = 'horizontal', closeMenu }: { layout?: 'horizontal' | 'vertical', closeMenu?: () => void }) {
     return (
         <>
-            <NavigationMenu orientation={layout} className='items-start'>
+            <NavigationMenu orientation={layout} className={`${layout === 'vertical' ? 'items-start' : 'items-center'}`}>
                 <NavigationMenuList className={layout === 'vertical' ? 'flex flex-col space-y-4' : 'flex'}>
                     <NavigationMenuItem>
                         <NavigationMenuLink asChild className='px-4 py-2 rounded-md hover:bg-accent'>
@@ -63,7 +63,6 @@ function Menu({ layout = 'horizontal', closeMenu }: { layout?: 'horizontal' | 'v
             </NavigationMenu>
             <UserAccount closeMenu={closeMenu} />
         </>
-
     )
 }
 

@@ -3,6 +3,7 @@
 import AdditonalInfo from '@/components/AdditonalInfo';
 import BillerInfo from '@/components/BillerInfo';
 import CustomerInfo from '@/components/CustomerInfo';
+import Header from '@/components/Header';
 import ItemsInfo from '@/components/ItemsInfo';
 import MetaInfo from '@/components/MetaInfo';
 import Preview from '@/components/Preview';
@@ -105,7 +106,8 @@ export default function Home() {
   };
 
 
-  return (
+  return (<>
+    <Header />
     <main className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
 
@@ -143,5 +145,7 @@ export default function Home() {
         </div>
       </div>
     </main>
+  </>
+
   );
 }

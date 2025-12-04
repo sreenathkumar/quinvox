@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
+import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from "better-auth/api";
-import { prismaAdapter } from 'better-auth/adapters/prisma'
 import prisma from "./prisma";
 
 
@@ -26,6 +26,7 @@ export const auth = betterAuth({
     },
     user: {
         additionalFields: {
+            role: { type: 'string', defaultValue: 'user', input: false },
             plan: { type: 'string', defaultValue: 'free', input: false },
             planExpires: { type: 'date', defaultValue: null, input: false },
         },

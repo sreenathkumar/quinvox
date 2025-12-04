@@ -1,6 +1,6 @@
 'use client';
 
-import saveUserQuery from "@/actions/saveQuery";
+import { saveUserQuery } from "@/actions/userQuery";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";

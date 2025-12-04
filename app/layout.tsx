@@ -29,7 +29,6 @@ export default function RootLayout({
       <body className={cn('font-body antialiased min-h-screen bg-background text-foreground flex flex-col')}>
         <InvoiceProvider>
           <SyncListener />
-          <Header />
           {children}
         </InvoiceProvider>
         <Toaster />
