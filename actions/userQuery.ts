@@ -53,4 +53,31 @@ async function getUserQueries() {
     }
 }
 
-export { saveUserQuery, getUserQueries };
+async function updateUserQueryStatus(id: string, status: 'pending' | 'handled') {
+    try {
+        const updatedQuery = await prisma.userQuery.update({
+            where: { id },
+            data: { status },
+        });
+
+        if (!updatedQuery) {
+            return {
+                success: false,
+                error: 'Failed to update query status',
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Query status updated successfully',
+        }
+    } catch (error: any) {
+        console.error("Error updating user query status:", error?.message)
+        return ({
+            success: false,
+            error: error?.message || "Unknown error occurred",
+        })
+    }
+}
+
+export { saveUserQuery, getUserQueries, updateUserQueryStatus };

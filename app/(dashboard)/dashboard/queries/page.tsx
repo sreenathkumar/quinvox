@@ -1,13 +1,12 @@
 import { getUserQueries } from "@/actions/userQuery";
-import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { auth } from "@/lib/auth"
+import { auth } from "@/lib/auth";
 import { formatCell } from "@/lib/utils";
-import { empty } from "@prisma/client/runtime/library";
-import { headers } from "next/headers"
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import SuperJSON from "superjson";
 import MessageTooltip from "./components/message-tooltip";
+import StatusTooltip from "./components/status-tooltip";
 
 interface QueryType {
     id: string;
@@ -89,7 +88,8 @@ function QueryTable({ data, headers }: QueryTableProps) {
                                 if (header.key === 'status') {
                                     const statusValue = value || 'Pending'
                                     return <TableCell key={header.title} colSpan={header.col} >
-                                        <Badge variant={'secondary'}>{statusValue as string}</Badge>
+                                        <StatusTooltip id={row.id} value={statusValue as string} />
+
                                     </TableCell>
                                 } else if (header.key === 'message') {
                                     return <TableCell key={header.title} colSpan={header.col} >
