@@ -1,6 +1,6 @@
 'use client';
 
-import getInvoices from "@/actions/getInvoices";
+import { getInvoices } from "@/actions/Invoices";
 import { useInvoiceStore } from "@/contexts/InvoiceProvider";
 import authClient from "@/lib/auth-client";
 import usePendingTask from "@/lib/stores/pending-task-store";
