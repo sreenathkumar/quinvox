@@ -1,18 +1,13 @@
 'use server';
 
-import { auth, isServerAuthenticated } from "@/lib/auth";
+import isServerAuthenticated from "@/lib/check-server-auth";
 import prisma from "@/lib/prisma";
-import { headers } from "next/headers";
 
 async function getInvoices() {
     try {
-        //get the logging in user
-        const session = await auth.api.getSession({
-            headers: await headers(),
-        });
-        const user = session?.user;
+        const { authenticated, user } = await isServerAuthenticated()
 
-        if (!user) {
+        if (!authenticated || !user) {
             throw new Error("User not authenticated");
         }
         const response = await prisma.invoice.findMany({
@@ -30,17 +25,17 @@ async function getInvoices() {
     }
 }
 
-async function deteleInvoices(invoiceNumbers: string[]) {
+async function deleteInvoices(invoiceNumbers: string[]) {
     try {
         //confirm user is authenticated
-        const isAuthenticated = await isServerAuthenticated();
+        const { authenticated, user } = await isServerAuthenticated();
 
-        if (!isAuthenticated) {
+        if (!authenticated || !user) {
             throw new Error("User not authenticated");
         }
 
         const response = await prisma.invoice.deleteMany({
-            where: { invoiceNumber: { in: invoiceNumbers } }
+            where: { invoiceNumber: { in: invoiceNumbers }, userId: user.id }
         });
 
         if (!response.count || response.count === 0) {
@@ -64,4 +59,4 @@ async function deteleInvoices(invoiceNumbers: string[]) {
     }
 }
 
-export { getInvoices };
+export { getInvoices, deleteInvoices };
