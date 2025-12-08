@@ -68,55 +68,57 @@ interface QueryTableProps {
 
 function QueryTable({ data, headers }: QueryTableProps) {
     return (
-        <Table className="border">
-            <TableHeader className="bg-muted sticky top-0 z-10 rounded-md">
-                <TableRow>
-                    {headers.map((header: TableHeaderType) => (
-                        <TableHead key={header.key} colSpan={header.col}>
-                            {header.title}
-                        </TableHead>
-                    ))}
-                </TableRow>
-            </TableHeader>
-            <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {data?.length ? (
-                    data.map((row: QueryType) => (
-                        <TableRow key={row.id}>
-                            {headers.map((header: TableHeaderType) => {
-                                let value = row[header.key as keyof QueryType];
-
-                                if (header.key === 'status') {
-                                    const statusValue = value || 'Pending'
-                                    return <TableCell key={header.title} colSpan={header.col} >
-                                        <StatusTooltip id={row.id} value={statusValue as string} />
-
-                                    </TableCell>
-                                } else if (header.key === 'message') {
-                                    return <TableCell key={header.title} colSpan={header.col} >
-                                        <MessageTooltip content={value as string} length={75} />
-                                    </TableCell>
-                                } else {
-                                    return <TableCell key={header.title} colSpan={header.col} >
-                                        {formatCell(row[header.key as keyof QueryType])}
-                                    </TableCell>
-                                }
-                            }
-                            )}
-                        </TableRow>
-                    ))
-
-                ) : (
+        <div className="overflow-hidden rounded-lg border">
+            <Table>
+                <TableHeader className="bg-muted sticky top-0 z-10 rounded-md">
                     <TableRow>
-                        <TableCell
-                            colSpan={tableHeaders.length}
-                            className="h-24 text-center"
-                        >
-                            No results.
-                        </TableCell>
+                        {headers.map((header: TableHeaderType) => (
+                            <TableHead key={header.key} colSpan={header.col}>
+                                {header.title}
+                            </TableHead>
+                        ))}
                     </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                </TableHeader>
+                <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                    {data?.length ? (
+                        data.map((row: QueryType) => (
+                            <TableRow key={row.id}>
+                                {headers.map((header: TableHeaderType) => {
+                                    let value = row[header.key as keyof QueryType];
+
+                                    if (header.key === 'status') {
+                                        const statusValue = value || 'Pending'
+                                        return <TableCell key={header.title} colSpan={header.col} >
+                                            <StatusTooltip id={row.id} value={statusValue as string} />
+
+                                        </TableCell>
+                                    } else if (header.key === 'message') {
+                                        return <TableCell key={header.title} colSpan={header.col} >
+                                            <MessageTooltip content={value as string} length={75} />
+                                        </TableCell>
+                                    } else {
+                                        return <TableCell key={header.title} colSpan={header.col} >
+                                            {formatCell(row[header.key as keyof QueryType])}
+                                        </TableCell>
+                                    }
+                                }
+                                )}
+                            </TableRow>
+                        ))
+
+                    ) : (
+                        <TableRow>
+                            <TableCell
+                                colSpan={tableHeaders.length}
+                                className="h-24 text-center"
+                            >
+                                No results.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
     )
 }
 

@@ -7,10 +7,10 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { toast, useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 
-const statusOptins = ['pending', 'handled']
+const statusOptins = ['pending', 'handled'];
 
 function StatusTooltip({ id, value }: { id: string, value: string }) {
     const [initialStatus, setInitialStatus] = useState(value || 'pending');
@@ -44,16 +44,14 @@ function StatusTooltip({ id, value }: { id: string, value: string }) {
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button variant='ghost' size='sm' className="hover:p-0 hover:bg-transparent">
-                    <Badge variant={initialStatus !== 'handled' ? 'secondary' : 'default'}>
-                        {initialStatus}
-                    </Badge>
-                </Button>
+                <Badge variant={initialStatus !== 'handled' ? 'secondary' : 'default'}>
+                    {initialStatus}
+                </Badge>
             </TooltipTrigger>
-            <TooltipContent className="flex flex-col gap-3">
+            <TooltipContent className="flex flex-col gap-2 p-0">
                 {
                     statusOptins.map((status) => (
-                        <Button key={status} onClick={() => handleStatusChange(status)} variant={'default'} size='sm' className="w-full hover:p-0 hover:bg-transparent bg-red-500">
+                        <Button key={status} onClick={() => handleStatusChange(status)} variant={'default'} size='sm' className={`w-full rounded-0 hover:p-0 ${status === initialStatus ? 'bg-muted' : 'bg-transparent'} hover:bg-muted`}>
                             <Badge variant={status !== 'handled' ? 'secondary' : 'default'}>{status}</Badge>
                         </Button>))
                 }
