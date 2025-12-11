@@ -14,7 +14,7 @@ interface SingleItemProps {
   index: number
 }
 
-function SingleItem({ form, onRemove, isFirst, index }: SingleItemProps) {
+function SingleItem({ form, onRemove, index }: SingleItemProps) {
   const quantity = form.watch(`items.${index}.quantity`) || 1;
   const unitPrice = form.watch(`items.${index}.unit_price`) || 0;
   return (
@@ -46,7 +46,6 @@ function SingleItem({ form, onRemove, isFirst, index }: SingleItemProps) {
         />
 
         <div className="flex items-center justify-between bg-muted px-4 rounded-md">
-          {/* {isFirst && <FormLabel>&nbsp;</FormLabel>} */}
           <span aria-label="item_price" className="text-sm font-medium">
             {formatCurrency(quantity * unitPrice)}
           </span>
