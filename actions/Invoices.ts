@@ -1,6 +1,7 @@
 'use server';
 
 import isServerAuthenticated from "@/lib/check-server-auth";
+import { InvoiceData, ServerResponse } from "@/lib/definitions";
 import prisma from "@/lib/prisma";
 
 async function getInvoices() {
@@ -25,7 +26,102 @@ async function getInvoices() {
     }
 }
 
-async function deleteInvoices(invoiceNumbers: string[]) {
+async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
+    try {
+        //check user is authenticated
+        const { authenticated, user } = await isServerAuthenticated();
+
+        if (!authenticated || !user) {
+            throw new Error("User not authenticated");
+        }
+        //check need to save client
+        const { saveClient, ...cleanData } = data;
+
+        //prepare invoice data
+        const invoiceData = {
+            ...cleanData,
+            userId: user.id,
+        };
+
+        //save the invoice data
+        const newInvoice = await prisma.invoice.create({
+            data: invoiceData
+        });
+
+        if (!newInvoice) {
+            throw new Error("Failed to add invoice");
+        }
+
+        if (saveClient) {
+            //extract client data
+            const clientData = {
+                userId: user.id,
+                name: data.clientName,
+                email: data.clientEmail,
+                address: data.clientAddress,
+                country: data.clientCountry || undefined,
+                phone: data.billerPhone || undefined,
+                type: data.clientType,
+            }
+
+            //check if client already exists
+            const existingClient = await prisma.client.findFirst({
+                where: {
+
+                    name: data.clientName,
+                    email: data.clientEmail,
+                    userId: user.id,
+                }
+            })
+
+            //if no, save the client data
+            if (!existingClient) {
+                const res = await prisma.client.create({
+                    data: clientData
+                });
+
+                //invoice is saved but client save failed
+                if (!res) {
+                    return {
+                        success: true,
+                        data: newInvoice,
+                        message: "Invoice added successfully, but failed to save client"
+                    }
+                }
+
+                //invoice and client are both saved
+                return {
+                    success: true,
+                    data: newInvoice,
+                    message: "Invoice and client saved successfully"
+                }
+            } else {
+                //invoice is saved,but client already exists so not saving
+                return {
+                    success: true,
+                    data: newInvoice,
+                    message: "Invoice added successfully, client already exists"
+                }
+            }
+        }
+
+        return {
+            success: true,
+            data: newInvoice,
+            message: "Invoice added successfully"
+        }
+
+        //save the client data
+    } catch (error: any) {
+        console.error("Error adding invoice:", error?.message);
+        return {
+            success: false,
+            message: "Error adding invoice: " + error?.message
+        }
+    }
+}
+
+async function deleteInvoices(invoiceNumbers: string[]): Promise<ServerResponse> {
     try {
         //confirm user is authenticated
         const { authenticated, user } = await isServerAuthenticated();
@@ -44,19 +140,26 @@ async function deleteInvoices(invoiceNumbers: string[]) {
 
         return {
             success: true,
-            deletedCount: response.count,
             message: `${response.count} invoices deleted successfully`
         }
 
-
     } catch (error: any) {
         console.error("Error deleting invoices:", error?.message);
+
+        if (error?.code === 'P2025') {
+            return {
+                success: false,
+                code: 'RESOURCE_NOT_FOUND',
+                message: "No invoices found to delete"
+            }
+        }
+
         return {
             success: false,
-            deletedCount: 0,
+            code: 'UNKNOWN_ERROR',
             message: "Error deleting invoices: " + error?.message
         };
     }
 }
 
-export { getInvoices, deleteInvoices };
+export { getInvoices, deleteInvoices, addInvoice };
