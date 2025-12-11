@@ -33,6 +33,7 @@ const defaultValues: InvoiceData = {
   items: [{ id: crypto.randomUUID(), description: '', quantity: 1, unit_price: 12 }],
   tax: 0,
   notes: '',
+  saveClient: false,
 };
 
 export default function Home() {
@@ -86,8 +87,9 @@ export default function Home() {
   };
 
   const handleLoadInvoice = (invoice: InvoiceData) => {
+    const { id, ...rest } = invoice;
     form.reset({
-      ...invoice,
+      ...rest,
       date: new Date(invoice.date),
       dueDate: new Date(invoice.dueDate),
     });

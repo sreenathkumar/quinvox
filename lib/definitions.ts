@@ -10,7 +10,7 @@ const ALLOWED_DOMAINS = [
 ];
 
 export const itemSchema = z.object({
-  id: string().optional().nullable(),
+  id: string().uuid(),
   description: z.string().min(1, { message: "Description is required." }),
   quantity: z.coerce.number().min(0.01, { message: "Quantity is required." }),
   unit_price: z.coerce.number().min(0, { message: "Price is required." }),
@@ -27,6 +27,7 @@ export const invoiceSchema = z.object({
   clientType: z.enum(['Individual', 'Business', 'Company']),
   clientName: z.string().min(1, { message: "Client name is required." }),
   clientAddress: z.string().min(1, { message: "Client address is required." }),
+  clientCountry: z.string().optional().nullable(),
   clientEmail: z.string().email({ message: "Invalid client email." }).min(1, { message: "Client email is required." }),
   date: z.date({
     required_error: "Invoice date is required.",
@@ -37,6 +38,7 @@ export const invoiceSchema = z.object({
   items: z.array(itemSchema).min(1, { message: "Please add at least one item." }),
   tax: z.coerce.number().min(0).max(100).default(0).optional().nullable(),
   notes: z.string().optional().nullable(),
+  saveClient: z.boolean().optional(),
 });
 
 export const contactFormSchema = z.object({
@@ -58,6 +60,23 @@ export const contactFormSchema = z.object({
     }),
 });
 
+export const clientSchema = z.object({
+  userId: z.string().optional(),
+  name: z.string().min(1, { message: "Client name is required." }),
+  email: z.string().email({ message: "Invalid client email." }).min(1, { message: "Client email is required." }),
+  address: z.string().min(1, { message: "Client address is required." }),
+  country: z.string({ message: "Client country is required." }).min(1).optional(),
+  phone: z.string().optional(),
+  type: z.enum(['Individual', 'Business', 'Company']),
+});
+
 export type InvoiceData = z.infer<typeof invoiceSchema>;
 export type InvoiceItem = z.infer<typeof itemSchema>;
 export type ContactFormData = z.infer<typeof contactFormSchema>;
+export type ClientData = z.infer<typeof clientSchema>;
+export type ServerResponse<T = any> = {
+  success: boolean;
+  data?: T;
+  message: string;
+  code?: string;
+}
