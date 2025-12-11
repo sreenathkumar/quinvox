@@ -31,15 +31,20 @@ async function syncWithCloud() {
 
                     removeTask(task.id);
                 } else {
-                    throw new Error(res.message);
+                    if (res.code === 'RESOURCE_NOT_FOUND' || res.code === 'DUPLICATE_RESOURCE') {
+                        removeTask(task.id);
+                    } else {
+                        throw new Error(res.message || 'Sync failed');
+                    }
+
                 }
-            } catch (error) {
+            } catch (error: any) {
                 toast({
                     title: "Sync Failed",
-                    description: `Failed to sync task ${task.id}: ${(error as Error).message}`,
+                    description: `Failed to sync task ${task.id}: ${error?.message}`,
                     variant: "destructive",
                 });
-
+                removeTask(task.id);
                 // stop processing and allow retry later
                 break;
             }
@@ -50,7 +55,7 @@ async function syncWithCloud() {
 }
 
 // debounce multiple calls within short time    
-async function triggerSync() {
+async function TriggerSync() {
     const { data: session } = await authClient.getSession();
     const user = session?.user;
 
@@ -64,4 +69,4 @@ async function triggerSync() {
     }, 10000); // 10s wait for batch tasks
 }
 
-export default triggerSync;
+export default TriggerSync;
