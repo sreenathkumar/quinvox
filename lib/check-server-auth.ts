@@ -1,7 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { auth } from './auth';
+import { auth, User } from './auth';
 async function isServerAuthenticated() {
     try {
         //confirm user is authenticated
@@ -9,12 +9,12 @@ async function isServerAuthenticated() {
             headers: await headers(),
         });
 
-        const user = session?.user;
+        const user: User | undefined = session?.user;
 
         if (!user) {
             return {
                 authenticated: false,
-                user: null
+                user
             }
         }
 
@@ -26,7 +26,7 @@ async function isServerAuthenticated() {
         console.error("Error checking authentication:", error?.message);
         return {
             authenticated: false,
-            user: null
+            user: undefined
         };
     }
 
