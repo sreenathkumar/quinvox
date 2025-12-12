@@ -10,9 +10,10 @@ interface DataTableProps<DataT, RowT> {
     data: DataT[],
     columns: ColumnDef<DataT, RowT>[],
     onDeleteRows?: (selectedRows: DataT[]) => Promise<void>
+    actionBtn?: React.ReactNode
 }
 
-function DataTable<DataT, RowT>({ data, columns, onDeleteRows }: DataTableProps<DataT, RowT>) {
+function DataTable<DataT, RowT>({ data, columns, onDeleteRows, actionBtn }: DataTableProps<DataT, RowT>) {
     const [rowSelection, setRowSelection] = useState({});
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -40,9 +41,9 @@ function DataTable<DataT, RowT>({ data, columns, onDeleteRows }: DataTableProps<
     });
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 flex-1">
             {/* Table Top Bar */}
-            <DataTableHeader table={table} onDeleteRows={onDeleteRows} />
+            <DataTableHeader table={table} onDeleteRows={onDeleteRows} actionBtn={actionBtn} />
             {/* Table */}
             <DataTableContent table={table} />
             {/* Table Bottom Bar */}

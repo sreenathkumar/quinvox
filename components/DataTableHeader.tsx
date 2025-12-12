@@ -2,78 +2,17 @@
 
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table } from "@tanstack/react-table";
-import { ChevronDown, Columns3, Plus, Trash } from "lucide-react";
+import { ChevronDown, Columns3, Trash } from "lucide-react";
 import { Button } from "./ui/button";
-import Link from "next/link";
 
 interface DataTableHeaderProps<DataT> {
     table: Table<DataT>;
     onDeleteRows?: (selectedRows: DataT[]) => Promise<void>
+    actionBtn?: React.ReactNode
 }
 
-function DataTableHeader<DataT>({ table, onDeleteRows }: DataTableHeaderProps<DataT>) {
-    //function to delete selected rows
-    // const deleteSelectedRows = async () => {
-    //     const selectedRows = table.getSelectedRowModel().rows;
-    //     const selectedInvoices = selectedRows.flatMap(row => {
-    //         const inv = row.original.invoiceNumber;
-    //         return inv ? [inv] : [];
-    //     }); // the number of the invoices to be deleted
+function DataTableHeader<DataT>({ table, onDeleteRows, actionBtn: ActionBtn }: DataTableHeaderProps<DataT>) {
 
-    //     //optimistic update to the local state
-    //     setData((prevData) => prevData.filter((invoice) => !selectedInvoices.includes(invoice.invoiceNumber)));
-    //     table.resetRowSelection();
-
-    //     //delete inovices from the server
-    //     const result = await deleteInvoices(selectedInvoices);
-
-    //     if (!result.success) {
-    //         //if deletion failed, revert the local state
-    //         setData(initialData);
-    //         toast({
-    //             title: "Error",
-    //             description: result.message,
-    //             variant: "destructive"
-    //         })
-    //     } else {
-    //         toast({
-    //             title: "Success",
-    //             description: result.message,
-    //         });
-    //     }
-
-    // };
-    // //function to delete selected rows
-    // const deleteSelectedRows = async () => {
-    //     const selectedRows = table.getSelectedRowModel().rows;
-    //     const selectedInvoices = selectedRows.flatMap(row => {
-    //         const inv = row.original.invoiceNumber;
-    //         return inv ? [inv] : [];
-    //     }); // the number of the invoices to be deleted
-
-    //     //optimistic update to the local state
-    //     setData((prevData) => prevData.filter((invoice) => !selectedInvoices.includes(invoice.invoiceNumber)));
-    //     table.resetRowSelection();
-
-    //     //delete inovices from the server
-    //     const result = await deleteInvoices(selectedInvoices);
-
-    //     if (!result.success) {
-    //         //if deletion failed, revert the local state
-    //         setData(initialData);
-    //         toast({
-    //             title: "Error",
-    //             description: result.message,
-    //             variant: "destructive"
-    //         })
-    //     } else {
-    //         toast({
-    //             title: "Success",
-    //             description: result.message,
-    //         });
-    //     }
-
-    // };
     const handleDeleteRows = () => {
         if (!onDeleteRows) return;
         const selectedRows = table.getSelectedRowModel().rows;
@@ -129,12 +68,10 @@ function DataTableHeader<DataT>({ table, onDeleteRows }: DataTableHeaderProps<Da
                         }
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Button variant={'outline'} size={'sm'}>
-                    <Link href='/' className="flex items-center gap-2">
-                        Add Invoice
-                        <Plus />
-                    </Link>
-                </Button>
+                {
+                    ActionBtn ?? null
+                }
+                {/*  */}
             </div>
         </div>
     )
