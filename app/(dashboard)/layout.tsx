@@ -5,7 +5,7 @@ import AppSidebar from "./components/app-sidebar";
 import DashboardHeader from "./components/sidebar-header";
 
 async function AuthLayout({ children }: { children: React.ReactNode }) {
-  const { authenticated } = await isServerAuthenticated();
+  const { authenticated, user } = await isServerAuthenticated();
 
   //only authenticated users can access this layout
   if (!authenticated) {
@@ -13,7 +13,7 @@ async function AuthLayout({ children }: { children: React.ReactNode }) {
   }
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={user} />
       <SidebarInset>
         <DashboardHeader />
         {children}
