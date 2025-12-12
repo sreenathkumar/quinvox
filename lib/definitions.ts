@@ -61,12 +61,12 @@ export const contactFormSchema = z.object({
 });
 
 export const clientSchema = z.object({
-  userId: z.string().optional(),
+  userId: z.string().nullish(),
   name: z.string().min(1, { message: "Client name is required." }),
   email: z.string().email({ message: "Invalid client email." }).min(1, { message: "Client email is required." }),
   address: z.string().min(1, { message: "Client address is required." }),
-  country: z.string({ message: "Client country is required." }).min(1).optional(),
-  phone: z.string().optional(),
+  country: z.string({ message: "Client country is required." }).min(1).nullish(),
+  phone: z.string().nullish(),
   type: z.enum(['Individual', 'Business', 'Company']),
 });
 

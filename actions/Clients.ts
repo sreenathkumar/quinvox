@@ -16,13 +16,26 @@ export async function getClients() {
         //fetch clients from the database
         const result = await prisma.client.findMany({
             where: { userId: user.id }
-        })
+        });
+        if (!result) {
+            return {
+                success: true,
+                message: "No clients found",
+                data: []
+            }
+        }
+
+        return {
+            success: true,
+            message: "Clients fetched successfully",
+            data: result
+        }
     } catch (error: any) {
         console.error("Error in getClients:", error.message);
         return {
             success: false,
             message: error.message,
-            data: null
+            data: []
         }
     }
 }
