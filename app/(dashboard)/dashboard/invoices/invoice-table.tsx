@@ -10,7 +10,8 @@ import { InvoiceData } from "@/lib/definitions";
 import { formatCurrency } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Plus } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 const columns: ColumnDef<InvoiceData>[] = [
@@ -128,7 +129,18 @@ function InvoiceTable({ data: initialData }: { data: InvoiceData[] }) {
     }
 
     return (
-        <DataTable data={data} columns={columns} onDeleteRows={deleteSelectedRows} />
+        <DataTable
+            data={data}
+            columns={columns}
+            onDeleteRows={deleteSelectedRows}
+            actionBtn={
+                <Button variant={'outline'} size={'sm'}>
+                    <Link href='/' className="flex items-center gap-2">
+                        Add Invoice
+                        <Plus />
+                    </Link>
+                </Button>
+            } />
     )
 }
 
