@@ -3,6 +3,7 @@
 import isServerAuthenticated from "@/lib/check-server-auth";
 import { InvoiceData, ServerResponse } from "@/lib/definitions";
 import prisma from "@/lib/prisma";
+import { addClient } from "./Clients";
 
 async function getInvoices() {
     try {
@@ -64,44 +65,23 @@ async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
                 type: data.clientType,
             }
 
-            //check if client already exists
-            const existingClient = await prisma.client.findFirst({
-                where: {
+            //add client data
+            const res = await addClient(clientData);
 
-                    name: data.clientName,
-                    email: data.clientEmail,
-                    userId: user.id,
-                }
-            })
-
-            //if no, save the client data
-            if (!existingClient) {
-                const res = await prisma.client.create({
-                    data: clientData
-                });
-
-                //invoice is saved but client save failed
-                if (!res) {
-                    return {
-                        success: true,
-                        data: newInvoice,
-                        message: "Invoice added successfully, but failed to save client"
-                    }
-                }
-
-                //invoice and client are both saved
+            //invoice is saved but client save failed
+            if (!res?.success) {
                 return {
                     success: true,
                     data: newInvoice,
-                    message: "Invoice and client saved successfully"
+                    message: "Invoice added successfully, but failed to save client"
                 }
-            } else {
-                //invoice is saved,but client already exists so not saving
-                return {
-                    success: true,
-                    data: newInvoice,
-                    message: "Invoice added successfully, client already exists"
-                }
+            }
+
+            //invoice and client are both saved
+            return {
+                success: true,
+                data: newInvoice,
+                message: "Invoice and client saved successfully"
             }
         }
 

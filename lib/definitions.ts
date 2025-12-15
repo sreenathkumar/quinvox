@@ -60,7 +60,7 @@ export const contactFormSchema = z.object({
     }),
 });
 
-export const clientSchema = z.object({
+export const profileSchema = z.object({
   userId: z.string().nullish(),
   name: z.string().min(1, { message: "Client name is required." }),
   email: z.string().email({ message: "Invalid client email." }).min(1, { message: "Client email is required." }),
@@ -73,7 +73,9 @@ export const clientSchema = z.object({
 export type InvoiceData = z.infer<typeof invoiceSchema>;
 export type InvoiceItem = z.infer<typeof itemSchema>;
 export type ContactFormData = z.infer<typeof contactFormSchema>;
-export type ClientData = z.infer<typeof clientSchema>;
+export type ProfileData = z.infer<typeof profileSchema>;
+export type ClientData = z.infer<typeof profileSchema>;
+export type BillerData = z.infer<typeof profileSchema>;
 export type ServerResponse<T = any> = {
   success: boolean;
   data?: T;

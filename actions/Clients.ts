@@ -3,6 +3,7 @@
 import isServerAuthenticated from "@/lib/check-server-auth";
 import { ClientData } from "@/lib/definitions";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function getClients() {
     try {
@@ -101,8 +102,21 @@ export async function addClient(data: ClientData) {
             throw new Error("User not authenticated");
         }
 
-        //add client to the database
-        const result = await prisma.client.create({
+        //check if client already exists
+        const existingClient = await prisma.client.findFirst({
+            where: {
+                name: data.name,
+                email: data.email,
+                userId: user.id,
+            }
+        });
+
+        //if no, save the client data
+        if (existingClient) {
+            throw new Error("Client with the same name and email already exists");
+        }
+
+        const res = await prisma.client.create({
             data: {
                 userId: user.id,
                 name: data.name,
@@ -114,15 +128,19 @@ export async function addClient(data: ClientData) {
             }
         });
 
-        if (!result) {
+        if (!res) {
             throw new Error("Failed to add client");
         }
+
+        //clear relevant cache
+        revalidatePath('/dashboard/clients');
 
         return {
             success: true,
             message: "Client added successfully",
-            data: result
+            data: res
         }
+
     } catch (error: any) {
         console.error("Error in addClient:", error.message);
         return {
