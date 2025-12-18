@@ -8,7 +8,6 @@ import {
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -89,15 +88,12 @@ function SidebarNavUser() {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {
-                            user?.role === 'admin' && (
-                                <DropdownMenuItem asChild>
-                                    <Link href={'/dashboard/queries'}>
-                                        Queries
-                                    </Link>
-                                </DropdownMenuItem>
-                            )
-                        }
+                        <DropdownMenuItem asChild>
+                            <Link href={'/dashboard/account'}>
+                                Account
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut />
                             Log out

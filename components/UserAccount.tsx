@@ -1,7 +1,7 @@
 'use client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogIn, LogOut, User as UserIcon } from 'lucide-react';
+import { LayoutDashboard, LogIn, LogOut, User as UserIcon, UserRound } from 'lucide-react';
 import authClient from '@/lib/auth-client';
 import usePendingTask from '@/lib/stores/pending-task-store';
 import { useInvoiceStore } from '@/contexts/InvoiceProvider';
@@ -55,10 +55,19 @@ function UserAccount({ closeMenu }: { closeMenu?: () => void }) {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem >
-                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                            <Link href="/dashboard">Dashboard</Link>
+                        <DropdownMenuItem asChild>
+                            <Link href="/dashboard">
+                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                Dashboard
+                            </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/dashboard/account">
+                                <UserRound className="mr-2 h-4 w-4" />
+                                Account
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout} >
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>Log out</span>

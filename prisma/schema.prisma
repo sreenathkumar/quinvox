@@ -23,6 +23,7 @@ model User {
   accounts      Account[]
   invoices      Invoice[]
   clients       Client[]
+  billers       Biller[]
 
   @@unique([email])
   @@map("user")
@@ -88,13 +89,15 @@ model Invoice {
   userId        String   
   user          User     @relation(fields:[userId], references:[id])
   invoiceNumber String   @unique
+  biller        Biller?  @relation(fields:[billerId], references:[id])
+  billerId      String?  
   billerName    String
   billerEmail   String
   billerPhone   String?
   billerAddress String
   client        Client?   @relation(fields:[clientId], references:[id])
   clientId      String?
-  clientType    ClientType
+  clientType    ProfileType
   clientName    String
   clientAddress String
   clientEmail   String
@@ -107,7 +110,7 @@ model Invoice {
   updatedAt     DateTime @default(now())
 }
 
-enum ClientType{
+enum ProfileType{
   Individual
   Business
   Company
@@ -140,7 +143,7 @@ model Client{
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   
   user      User        @relation(fields:[userId], references:[id])
-  type      ClientType
+  type      ProfileType
   name      String
   email     String      
   address   String
@@ -149,5 +152,19 @@ model Client{
   invoices  Invoice[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+}
 
+model Biller{
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   
+  user      User        @relation(fields:[userId], references:[id])
+  type      ProfileType
+  name      String
+  email     String      
+  address   String
+  phone     String?
+  country   String?
+  invoices  Invoice[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }

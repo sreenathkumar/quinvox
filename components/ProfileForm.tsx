@@ -15,7 +15,6 @@ import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
 
 interface ProfileFormProps {
-    mode: 'create' | 'edit';
     profile: string,
     onSubmit: SubmitHandler<ProfileData>,
     form: UseFormReturn<ProfileData>
