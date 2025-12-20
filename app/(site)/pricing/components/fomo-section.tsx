@@ -6,7 +6,7 @@ import FOMOItem from "./fomo-item"
 function FOMOSection() {
     return (
         <section className="py-16 bg-accent/80 text-foreground md:py-20">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
                     Don't Let Your Invoicing Slow You Down
                 </h2>

@@ -4,11 +4,10 @@ import ContactForm from "./components/contact-form"
 import ContactInfoItem from "./components/contact-info-item"
 import Link from "next/link";
 
-
 function ContactPage() {
     return (
         <main className="min-h-screen bg-background flex flex-col py-16">
-            <div className="max-w-6xl mx-auto px-4 flex flex-col flex-1 sm:px-6 lg:px-8">
+            <div className="container mx-auto px-4 flex flex-col flex-1 sm:px-6 lg:px-8">
 
                 <div className="text-center mb-12">
                     <h1 className="text-4xl text-foreground sm:text-5xl font-extrabold leading-tight">
@@ -19,9 +18,8 @@ function ContactPage() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-                    <div className="lg:col-span-2">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+                    <div className="lg:col-span-3">
                         <Card className="p-6 md:p-10">
                             <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
                                 Send us a message <MessageSquare className="w-6 h-6 ml-3 text-accent" />
@@ -30,7 +28,7 @@ function ContactPage() {
                         </Card>
                     </div>
 
-                    <div className="lg:col-span-1 space-y-8 mt-4 lg:mt-0">
+                    <div className="lg:col-span-2 space-y-8 mt-4 lg:mt-0">
                         <Card className=" text-white shadow-xl border p-6 md:p-8 space-y-6">
                             <h3 className="text-xl font-bold border-b border-white/20 pb-4">
                                 General Support

@@ -12,17 +12,19 @@ import SocialLogin from './components/social-login';
 async function SigninPage() {
 
   return (
-    <Card className="w-full max-w-sm ">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Let's Get Started</CardTitle>
-        <CardDescription className='text-center'>
-          Login with your favorite social platform
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <SocialLogin />
-      </CardContent>
-    </Card>
+    <main className="container mx-auto flex-1 flex items-center justify-center">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">Let's Get Started</CardTitle>
+          <CardDescription className='text-center'>
+            Login with your favorite social platform
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SocialLogin />
+        </CardContent>
+      </Card>
+    </main>
   );
 }
 

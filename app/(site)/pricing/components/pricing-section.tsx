@@ -6,7 +6,7 @@ import SwitchPlan from "./switch-plan"
 function PricingSection() {
     return (
         <section className="py-16 md:py-20">
-            <div className="max-w-6xl mx-auto px-4 flex flex-col gap-10 sm:px-6 lg:px-8">
+            <div className="container mx-auto px-4 flex flex-col gap-10 sm:px-6 lg:px-8">
                 <PlanProvider>
                     <SwitchPlan />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
@@ -29,7 +29,7 @@ function PricingSection() {
                             name='pro'
                             heading='Pro Plan'
                             description='Ideal for growing businesses that need more features.'
-                            price={'20'}
+                            price={'10'}
                             note='14-day free trial. Cancel anytime.'
                             bedge='Most Popular'
                             cta='Contact Sales'

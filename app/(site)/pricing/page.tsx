@@ -5,7 +5,7 @@ import Link from 'next/link';
 function PricingPage() {
     return (
         <main className="flex-1 flex flex-col bg-background py-16 md:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight">
                     Simple Pricing Powerful Invoicing
                 </h1>
@@ -16,7 +16,7 @@ function PricingPage() {
             <PricingSection />
             <FOMOSection />
             <section className="pt-16 mt-auto md:pt-20">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="text-3xl font-bold text-foreground">Need more features?</h2>
                     <p className="mt-4 text-muted-foreground">A detailed breakdown of the features included in each plan.</p>
 
