@@ -130,7 +130,7 @@ export default function Home() {
                 <AdditonalInfo form={form} />
                 <div className='flex items-center gap-4'>
                   <Button type="submit" form="invoice-form" className="bg-accent text-accent-foreground hover:bg-accent/90 grow">
-                    <Save className="mr-2 h-4 w-4" /> {activeInvoiceId ? 'Update' : 'Save'} Invoice
+                    <Save className="mr-2 h-4 w-4" /> {form.getValues('invoiceNumber') === activeInvoiceId ? 'Update' : 'Save'} Invoice
                   </Button>
                   <Button className='grow' type="button" variant="outline" onClick={handleCreateNew}>
                     <Plus className="mr-2 h-4 w-4" /> Create New
