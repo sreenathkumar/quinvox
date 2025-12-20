@@ -202,3 +202,56 @@ export async function deleteBiller(billerId: string) {
         }
     }
 }
+
+export async function searchBillers(query: string) {
+
+    if (!query || query.trim() === '') {
+        return {
+            success: true,
+            message: "No query provided",
+            data: []
+        }
+    }
+
+    try {
+        //check if authenticated
+        const { authenticated, user } = await isServerAuthenticated();
+
+        if (!authenticated || !user) {
+            throw new Error("User not authenticated");
+        }
+
+        //search billers from the database
+        const result = await prisma.biller.findMany({
+            where: {
+                userId: user.id,
+                OR: [
+                    { name: { contains: query.trim(), mode: 'insensitive' } },
+                    { email: { contains: query.trim(), mode: 'insensitive' } },
+                ]
+            }
+        });
+
+        if (!result) {
+            return {
+                success: true,
+                message: "No billers found",
+                data: []
+            }
+        }
+
+        return {
+            success: true,
+            message: "Billers fetched successfully",
+            data: result
+        }
+
+    } catch (error: any) {
+        console.error("Error in searchBillers:", error.message);
+        return {
+            success: false,
+            message: error.message,
+            data: null
+        }
+    }
+}

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 import { useToast } from '@/hooks/use-toast';
+import authClient from '@/lib/auth-client';
 import { InvoiceData, invoiceSchema } from '@/lib/definitions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Save } from 'lucide-react';
@@ -41,6 +42,9 @@ export default function Home() {
     resolver: zodResolver(invoiceSchema),
     defaultValues,
   });
+
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
   const { toast } = useToast();
   const { invoices, addInvoice, removeInvoice, updateInvoice } =
@@ -107,12 +111,10 @@ export default function Home() {
     });
   };
 
-
   return (<>
     <Header />
     <main className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-
         <div className="lg:col-span-3 space-y-8">
           <Form {...form} >
             <form
@@ -122,8 +124,8 @@ export default function Home() {
             >
               <MetaInfo form={form} />
               <ItemsInfo form={form} />
-              <CustomerInfo form={form} />
-              <BillerInfo form={form} />
+              <CustomerInfo form={form} user={user} />
+              <BillerInfo form={form} user={user} />
               <div className="p-6 mt-4 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col gap-6">
                 <AdditonalInfo form={form} />
                 <div className='flex items-center gap-4'>

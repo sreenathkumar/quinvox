@@ -7,23 +7,21 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import authClient from '@/lib/auth-client';
+import { User } from '@/lib/auth';
+import { X } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
-import SearchClientInput from './SearchClientInput';
+import SearchProfileInput from './SearchProfileInput';
+import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
-import Link from 'next/link';
-import { Button } from './ui/button';
-import { X } from 'lucide-react';
 
-function CustomerInfo({ form }: { form: UseFormReturn<any> }) {
-    const { data: session } = authClient.useSession();
+function CustomerInfo({ form, user }: { form: UseFormReturn<any>, user?: User }) {
     const [showUpgrade, setShowUpgrade] = useState(false);
-    const user = session?.user;
 
     const handleCheckChange = (field: ControllerRenderProps<any, "saveClient">) => {
         if (!field.value && (user?.plan !== 'pro')) {
@@ -75,7 +73,13 @@ function CustomerInfo({ form }: { form: UseFormReturn<any> }) {
                             <FormControl>
                                 {
                                     (user?.plan === 'pro' || user?.role === 'admin') ? (
-                                        <SearchClientInput placeholder="Client Name" {...field} setValue={form.setValue} />
+                                        <SearchProfileInput
+                                            {...field}
+                                            placeholder="Client Name"
+                                            setValue={form.setValue}
+                                            profile="client"
+                                            className='capitalize'
+                                        />
                                     ) : (
                                         <Input placeholder="Client Name" {...field} />
                                     )

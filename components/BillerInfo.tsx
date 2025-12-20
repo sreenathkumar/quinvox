@@ -11,9 +11,11 @@ import {
 import { Input } from "./ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
+import SearchProfileInput from './SearchProfileInput';
 import { InvoiceData } from "@/lib/definitions";
+import { User } from "@/lib/auth";
 
-function BillerInfo({ form }: { form: UseFormReturn<InvoiceData> }) {
+function BillerInfo({ form, user }: { form: UseFormReturn<InvoiceData>, user?: User }) {
 
   return (
     <Card>
@@ -29,7 +31,20 @@ function BillerInfo({ form }: { form: UseFormReturn<InvoiceData> }) {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your Name" {...field} />
+                {
+                  (user?.plan === 'pro' || user?.role === 'admin') ? (
+                    <SearchProfileInput
+                      {...field}
+                      placeholder="Biller Name"
+                      setValue={form.setValue}
+                      profile="biller"
+                      className='capitalize'
+                      autoComplete="off"
+                    />
+                  ) : (
+                    <Input placeholder="Biller Name" {...field} />
+                  )
+                }
               </FormControl>
               <FormMessage />
             </FormItem>

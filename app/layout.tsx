@@ -1,10 +1,9 @@
-import './globals.css';
+import SyncListener from '@/components/SyncListener';
 import { Toaster } from '@/components/ui/toaster';
 import { InvoiceProvider } from '@/contexts/InvoiceProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import SyncListener from '@/components/SyncListener';
-import Header from '@/components/Header';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Quinvox | Free Online Invoice Creator | Quick Invoice Tool',
