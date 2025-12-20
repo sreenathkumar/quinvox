@@ -67,7 +67,7 @@ function AddClientForm() {
                 <DialogDescription>
                     Add client form goes here.
                 </DialogDescription>
-                <ProfileForm mode='create' profile='client' onSubmit={handleSubmit} form={form} />
+                <ProfileForm profile='client' onSubmit={handleSubmit} form={form} />
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Cancel</Button>
