@@ -1,13 +1,13 @@
-import { Card } from "@/components/ui/card"
-import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
-import ContactForm from "./components/contact-form"
-import ContactInfoItem from "./components/contact-info-item"
-import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
+import ContactForm from "./components/contact-form";
+import ContactInfoItem from "./components/contact-info-item";
+import FAQ from "./components/faq-section";
 
 function ContactPage() {
     return (
         <main className="min-h-screen bg-background flex flex-col py-16">
-            <div className="container mx-auto px-4 flex flex-col flex-1 sm:px-6 lg:px-8">
+            <section className="container mx-auto px-4 pb-16 flex flex-col flex-1 sm:px-6 lg:px-8">
 
                 <div className="text-center mb-12">
                     <h1 className="text-4xl text-foreground sm:text-5xl font-extrabold leading-tight">
@@ -52,14 +52,8 @@ function ContactPage() {
                     </div>
                 </div>
 
-                <div className="mt-auto">
-                    <h3 className="text-lg font-bold text-foreground mb-3">Quick Links</h3>
-                    <ul className="space-y-2 text-muted-foreground flex flex-col">
-                        <Link href={'#'}>FAQ Center &rarr;</Link>
-                        <Link href={'#'}>Technical Documentation &rarr;</Link>
-                    </ul>
-                </div>
-            </div>
+            </section>
+            <FAQ />
         </main>
     )
 }
