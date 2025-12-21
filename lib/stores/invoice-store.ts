@@ -12,7 +12,7 @@ export interface InvoiceStoreType {
     clearInvoices: () => void
 }
 
-const createInvoiceStore = () => createStore<InvoiceStoreType>()(
+export const CreateInvoiceStore = () => createStore<InvoiceStoreType>()(
     persist(
         (set, get) => ({
             invoices: [] as Array<InvoiceData>,
@@ -75,9 +75,17 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
                 const pendingTask = usePendingTask.getState().tasks;
                 const isPending = pendingTask.find(task => task.id === invoiceId);
 
+                //remove from the invoice store
+                set({
+                    invoices: get().invoices.filter(
+                        (invoice) => invoice.invoiceNumber !== invoiceId
+                    ),
+                });
+
                 //if it is pending, remove it from the pending tasks
                 if (isPending) {
                     usePendingTask.getState().removeTask(isPending.id);
+                    return;
                 }
 
                 //add delete task to pending tasks
@@ -85,13 +93,6 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
                     id: invoiceId,
                     type: 'delete',
                     payload: { invoiceNumber: invoiceId },
-                });
-
-                //remove from the invoice store
-                set({
-                    invoices: get().invoices.filter(
-                        (invoice) => invoice.invoiceNumber !== invoiceId
-                    ),
                 });
             },
 
@@ -102,5 +103,3 @@ const createInvoiceStore = () => createStore<InvoiceStoreType>()(
         }
     )
 )
-
-export default createInvoiceStore;

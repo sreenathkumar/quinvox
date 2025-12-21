@@ -1,10 +1,10 @@
 'use client';
 
-import createInvoiceStore, { InvoiceStoreType } from "@/lib/stores/invoice-store";
+import { CreateInvoiceStore, InvoiceStoreType } from "@/lib/stores/invoice-store";
 import { type ReactNode, createContext, useContext, useRef } from "react";
 import { useStore } from "zustand";
 
-type InvoiceStoreApi = ReturnType<typeof createInvoiceStore>;
+type InvoiceStoreApi = ReturnType<typeof CreateInvoiceStore>;
 
 //invoice store context
 export const InvoiceContext = createContext<InvoiceStoreApi | undefined>(undefined);
@@ -14,7 +14,7 @@ export const InvoiceProvider = ({ children }: { children: ReactNode }) => {
     const storeRef = useRef<InvoiceStoreApi | null>(null);
 
     if (!storeRef.current) {
-        storeRef.current = createInvoiceStore();
+        storeRef.current = CreateInvoiceStore();
     }
 
     return (
