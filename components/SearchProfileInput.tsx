@@ -55,6 +55,7 @@ function SearchClientInput({ profile, onChange, setValue, ...rest }: any) {
     // handle selecting a search result
     const handleSearchResult = (pro: ProfileType) => {
         if (!setValue) return;
+        setValue(`${profile}Id`, pro.id);
         setValue(`${profile}Type`, pro.type);
         setValue(`${profile}Name`, pro.name);
         setValue(`${profile}Email`, pro.email);
@@ -62,6 +63,7 @@ function SearchClientInput({ profile, onChange, setValue, ...rest }: any) {
 
         setSearchResults([]);
     }
+
     return (
         <div className="relative">
             <Input

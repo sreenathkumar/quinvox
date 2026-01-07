@@ -90,13 +90,13 @@ model Invoice {
   user          User     @relation(fields:[userId], references:[id])
   invoiceNumber String   @unique
   biller        Biller?  @relation(fields:[billerId], references:[id])
-  billerId      String?  
+  billerId      String?  @db.ObjectId
   billerName    String
   billerEmail   String
   billerPhone   String?
   billerAddress String
   client        Client?   @relation(fields:[clientId], references:[id])
-  clientId      String?
+  clientId      String?   @db.ObjectId
   clientType    ProfileType
   clientName    String
   clientAddress String

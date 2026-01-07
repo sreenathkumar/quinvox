@@ -24,6 +24,7 @@ export const invoiceSchema = z.object({
   billerEmail: z.string().email({ message: "Invalid Biller email." }).min(1, { message: "Biller email is required." }),
   billerPhone: z.string().nullable().optional(),
   billerAddress: z.string().min(1, { message: "Biller address is required." }),
+  clientId: z.string().optional().nullable(),
   clientType: z.enum(['Individual', 'Business', 'Company']),
   clientName: z.string().min(1, { message: "Client name is required." }),
   clientAddress: z.string().min(1, { message: "Client address is required." }),

@@ -25,6 +25,7 @@ const defaultValues: InvoiceData = {
   billerAddress: '',
   billerEmail: '',
   billerPhone: '',
+  clientId: '',
   clientType: 'Individual',
   clientName: '',
   clientAddress: '',

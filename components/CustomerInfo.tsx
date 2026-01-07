@@ -44,6 +44,22 @@ function CustomerInfo({ form, user }: { form: UseFormReturn<any>, user?: User })
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}
+                    name="clientId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input
+                                    type="hidden"
+                                    id='clientId'
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
                     name='clientType'
                     render={({ field }) => (
                         <FormItem>
