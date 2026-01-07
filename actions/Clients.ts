@@ -16,7 +16,11 @@ export async function getClients() {
 
         //fetch clients from the database
         const result = await prisma.client.findMany({
-            where: { userId: user.id }
+            where: { userId: user.id },
+            orderBy: { invoices: { _count: 'desc' } },
+            include: {
+                _count: { select: { invoices: true } }
+            }
         });
         if (!result) {
             return {

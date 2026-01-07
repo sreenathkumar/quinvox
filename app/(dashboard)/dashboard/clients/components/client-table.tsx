@@ -45,6 +45,8 @@ function ClientTable({ clients }: { clients: ClientData[] }) {
         <DataTable
             columns={columns}
             data={clients}
+            header={true}
+            footer={true}
             actionBtn={
                 <AddClientForm />
             }

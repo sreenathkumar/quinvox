@@ -132,6 +132,8 @@ function InvoiceTable({ data: initialData }: { data: InvoiceData[] }) {
         <DataTable
             data={data}
             columns={columns}
+            header={true}
+            footer={true}
             onDeleteRows={deleteSelectedRows}
             actionBtn={
                 <Button variant={'outline'} size={'sm'}>

@@ -12,14 +12,14 @@ export async function getBillers(billerId?: string) {
         //check if authenticated
         const { authenticated, user } = await isServerAuthenticated();
 
-        if (!authenticated) {
+        if (!authenticated || !user) {
             throw new Error("Not authenticated");
         }
 
         if (billerId) {
             //fetch single biller from database
             const res = await prisma.biller.findUnique({
-                where: { id: billerId, userId: user?.id }
+                where: { id: billerId, userId: user.id },
             });
             if (res) {
                 return {
@@ -33,7 +33,7 @@ export async function getBillers(billerId?: string) {
         } else {
             //fetch all billers from database
             const res = await prisma.biller.findMany({
-                where: { userId: user?.id }
+                where: { userId: user.id }, orderBy: { updatedAt: 'desc' }
             });
 
             if (res.length > 0) {
