@@ -3,9 +3,10 @@
 import isServerAuthenticated from "@/lib/check-server-auth";
 import { InvoiceData, ServerResponse } from "@/lib/definitions";
 import prisma from "@/lib/prisma";
-import { addClient } from "./Clients";
+import { Prisma } from "@prisma/client";
 
-async function getInvoices() {
+//function to get all invoices for the authenticated user
+export async function getInvoices() {
     try {
         const { authenticated, user } = await isServerAuthenticated()
 
@@ -27,7 +28,9 @@ async function getInvoices() {
     }
 }
 
-async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
+
+//function to add a new invoice
+export async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
     try {
         //check user is authenticated
         const { authenticated, user } = await isServerAuthenticated();
@@ -36,13 +39,32 @@ async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
             throw new Error("User not authenticated");
         }
         //check need to save client
-        const { saveClient, ...cleanData } = data;
+        const { saveClient, userId, clientId, ...rawData } = data;
+        let invoiceData: Prisma.InvoiceCreateInput;
 
-        //prepare invoice data
-        const invoiceData = {
-            ...cleanData,
-            userId: user.id,
-        };
+        if (saveClient) {
+            invoiceData = {
+                ...rawData,
+                user: { connect: { id: user.id } },
+                client: {
+                    create: {
+                        user: { connect: { id: user.id } },
+                        name: data.clientName,
+                        email: data.clientEmail,
+                        address: data.clientAddress,
+                        country: data.clientCountry || undefined,
+                        phone: data.billerPhone || undefined,
+                        type: data.clientType,
+                    }
+                }
+            }
+        } else {
+            invoiceData = {
+                ...rawData,
+                client: clientId ? { connect: { id: clientId } } : undefined,
+                user: { connect: { id: user.id } },
+            }
+        }
 
         //save the invoice data
         const newInvoice = await prisma.invoice.create({
@@ -51,38 +73,6 @@ async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
 
         if (!newInvoice) {
             throw new Error("Failed to add invoice");
-        }
-
-        if (saveClient) {
-            //extract client data
-            const clientData = {
-                userId: user.id,
-                name: data.clientName,
-                email: data.clientEmail,
-                address: data.clientAddress,
-                country: data.clientCountry || undefined,
-                phone: data.billerPhone || undefined,
-                type: data.clientType,
-            }
-
-            //add client data
-            const res = await addClient(clientData);
-
-            //invoice is saved but client save failed
-            if (!res?.success) {
-                return {
-                    success: true,
-                    data: newInvoice,
-                    message: "Invoice added successfully, but failed to save client"
-                }
-            }
-
-            //invoice and client are both saved
-            return {
-                success: true,
-                data: newInvoice,
-                message: "Invoice and client saved successfully"
-            }
         }
 
         return {
@@ -101,7 +91,8 @@ async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
     }
 }
 
-async function deleteInvoices(invoiceNumbers: string[]): Promise<ServerResponse> {
+//function to delete invoices
+export async function deleteInvoices(invoiceNumbers: string[]): Promise<ServerResponse> {
     try {
         //confirm user is authenticated
         const { authenticated, user } = await isServerAuthenticated();
@@ -142,4 +133,38 @@ async function deleteInvoices(invoiceNumbers: string[]): Promise<ServerResponse>
     }
 }
 
-export { getInvoices, deleteInvoices, addInvoice };
+//function to get recent invoices
+export async function getRecentInvoices(length: number = 5): Promise<ServerResponse<InvoiceData[]>> {
+    try {
+        //confirm user is authenticated
+        const { authenticated, user } = await isServerAuthenticated();
+
+        if (!authenticated || !user) {
+            throw new Error("User not authenticated");
+        }
+
+        const recentInvoices = await prisma.invoice.findMany({
+            where: { userId: user.id },
+            orderBy: { updatedAt: 'desc' },
+            take: length
+        });
+
+        if (!recentInvoices) {
+            throw new Error("No recent invoices found");
+        }
+
+        return {
+            success: true,
+            message: "Recent invoices fetched successfully",
+            data: recentInvoices
+        }
+    } catch (error: any) {
+        console.log("Error fetching recent invoices:", error?.message);
+
+        return {
+            success: false,
+            message: "Error fetching recent invoices: " + error?.message,
+            data: []
+        }
+    }
+}
