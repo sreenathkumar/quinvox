@@ -91,6 +91,7 @@ export default function Home() {
     setActiveInvoiceId(null);
   };
 
+  //function to load invoice data into the form
   const handleLoadInvoice = (invoice: InvoiceData) => {
     const { id, ...rest } = invoice;
     form.reset({
@@ -101,6 +102,7 @@ export default function Home() {
     setActiveInvoiceId(invoice.invoiceNumber!);
   };
 
+  //function to deleted the invoice
   const handleDeleteInvoice = (invoiceId: string) => {
     removeInvoice(invoiceId);
     if (activeInvoiceId === invoiceId) {

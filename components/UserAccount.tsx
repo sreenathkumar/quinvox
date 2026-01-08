@@ -1,10 +1,7 @@
 'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogIn, LogOut, User as UserIcon, UserRound } from 'lucide-react';
-import authClient from '@/lib/auth-client';
-import usePendingTask from '@/lib/stores/pending-task-store';
-import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,8 +10,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import Link from 'next/link';
+import { useInvoiceStore } from '@/contexts/InvoiceProvider';
 import { useIsMobile } from '@/hooks/use-mobile';
+import authClient from '@/lib/auth-client';
+import usePendingTask from '@/lib/stores/pending-task-store';
+import { LayoutDashboard, LogIn, LogOut, UserRound } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 
 function UserAccount({ closeMenu }: { closeMenu?: () => void }) {
@@ -23,6 +25,7 @@ function UserAccount({ closeMenu }: { closeMenu?: () => void }) {
     const user = session?.user;
     const { clearInvoices } = useInvoiceStore()
     const { clearTasks } = usePendingTask.getState();
+    const router = useRouter();
 
     const handleLogout = async () => {
         await authClient.signOut();
@@ -32,7 +35,8 @@ function UserAccount({ closeMenu }: { closeMenu?: () => void }) {
         if (closeMenu) {
             closeMenu();
         }
-        console.log('User logged out and pending tasks cleared.');
+
+        router.push('/')
     };
 
     return (

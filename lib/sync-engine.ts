@@ -39,12 +39,13 @@ async function syncWithCloud() {
 
                 }
             } catch (error: any) {
+                removeTask(task.id);
                 toast({
                     title: "Sync Failed",
                     description: `Failed to sync task ${task.id}: ${error?.message}`,
                     variant: "destructive",
                 });
-                removeTask(task.id);
+
                 // stop processing and allow retry later
                 break;
             }
