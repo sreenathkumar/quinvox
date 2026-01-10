@@ -2,7 +2,7 @@
 
 import isServerAuthenticated from "@/lib/check-server-auth";
 import prisma from "@/lib/prisma";
-import { ClientAggregation, InvoiceAggregation } from "@/lib/statistics-aggregation";
+import { getClientAggregation, getInvoiceAggregation } from "@/lib/statistics-aggregation";
 import { formatCurrency } from "@/lib/utils";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 
@@ -40,8 +40,8 @@ export async function getAnalytics() {
         }
 
         const [invoiceStats, clientStats] = await Promise.all([
-            generateInvoieStat(),
-            generateClientStat()
+            generateInvoieStat(user.id),
+            generateClientStat(user.id)
         ]);
 
         if (!invoiceStats || !clientStats) {
@@ -84,7 +84,7 @@ export async function getRevenueBarData({ from, to, timezone }: { from: string, 
                 {
                     $match: {
                         createdAt: { $gte: { $date: start }, $lte: { $date: end } },
-
+                        userId: user.id
                     }
                 },
 
@@ -179,10 +179,10 @@ export async function getRevenueBarData({ from, to, timezone }: { from: string, 
 }
 
 //generate the statistics related to the invoice model.
-async function generateInvoieStat(): Promise<InvoiceStatResult | null> {
+async function generateInvoieStat(userId: string): Promise<InvoiceStatResult | null> {
     try {
         const result = await prisma.invoice.aggregateRaw({
-            pipeline: InvoiceAggregation,
+            pipeline: getInvoiceAggregation(userId),
         }) as unknown as InvoiceStatResult[];
 
         if (!result || result.length === 0) {
@@ -197,10 +197,10 @@ async function generateInvoieStat(): Promise<InvoiceStatResult | null> {
 }
 
 // generate statistics related to the client model
-async function generateClientStat(): Promise<ClientStatResult | null> {
+async function generateClientStat(userId: string): Promise<ClientStatResult | null> {
     try {
         const result = await prisma.client.aggregateRaw({
-            pipeline: ClientAggregation,
+            pipeline: getClientAggregation(userId),
         }) as unknown as ClientStatResult[];
 
         if (!result || result.length === 0) {
