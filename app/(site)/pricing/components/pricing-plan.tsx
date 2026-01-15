@@ -40,7 +40,7 @@ function PricingPlan({ name, heading, description, price, note, cta, bedge, chil
                 </CardContent>
 
                 <CardFooter className='pt-6'>
-                    <BuyPlanBtn name={name} btnText={cta} />
+                    <BuyPlanBtn name={name} />
                 </CardFooter>
             </Card>
         </div>

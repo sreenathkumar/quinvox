@@ -17,6 +17,7 @@ model User {
   role          Role?     @default(user)
   plan          Plan      @default(free)  
   planExpires   DateTime? 
+  trialUsed     Boolean   @default(false) 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
@@ -31,6 +32,7 @@ model User {
 
 enum Plan{
   free
+  trial
   pro
 }
 

@@ -15,7 +15,7 @@ function PricingSection() {
                             heading=''
                             description=''
                             price='0'
-                            cta='Start for Free'
+                            cta="Start for free"
                         >
                             <FeatureItem available={true}>Create & edit invoices</FeatureItem>
                             <FeatureItem available={true}>Local storage only</FeatureItem>
@@ -31,7 +31,7 @@ function PricingSection() {
                             description='Ideal for growing businesses that need more features.'
                             price={'10'}
                             note='14-day free trial. Cancel anytime.'
-                            bedge='Most Popular'
+                            bedge='Recommended'
                             cta='Contact Sales'
                         >
                             <FeatureItem available={true}>Create & edit invoices</FeatureItem>

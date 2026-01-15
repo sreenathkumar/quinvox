@@ -24,6 +24,7 @@ import authClient from "@/lib/auth-client"
 import usePendingTask from "@/lib/stores/pending-task-store"
 import { Ellipsis, LogOut } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 function SidebarNavUser() {
     const { isMobile } = useSidebar();
@@ -31,6 +32,7 @@ function SidebarNavUser() {
     const user = session?.user;
     const { clearInvoices } = useInvoiceStore()
     const { clearTasks } = usePendingTask.getState();
+    const router = useRouter()
 
     if (!user) {
         return null;
@@ -41,7 +43,7 @@ function SidebarNavUser() {
         //clear the pending tasks on logout
         clearTasks();
         clearInvoices();
-
+        router.push('/')
         console.log('User logged out and pending tasks cleared.');
     };
 

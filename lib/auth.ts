@@ -29,6 +29,7 @@ export const auth = betterAuth({
             role: { type: 'string', defaultValue: 'user', input: false },
             plan: { type: 'string', defaultValue: 'free', input: false },
             planExpires: { type: 'date', defaultValue: null, input: false },
+            trialUsed: { type: 'boolean', defaultValue: false, input: false },
         },
     }
 });
