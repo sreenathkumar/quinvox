@@ -8,11 +8,19 @@ import { Prisma } from "@prisma/client";
 //function to get all invoices for the authenticated user
 export async function getInvoices() {
     try {
-        const { authenticated, user } = await isServerAuthenticated()
+        const { authenticated, user, isPro } = await isServerAuthenticated()
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
         }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to get Invoices.",
+            }
+        }
+
         const response = await prisma.invoice.findMany({
             where: { userId: user.id }
         });
@@ -28,16 +36,23 @@ export async function getInvoices() {
     }
 }
 
-
 //function to add a new invoice
 export async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
     try {
         //check user is authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
         }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to add Invoice.",
+            }
+        }
+
         //check need to save client
         const { saveClient, userId, clientId, ...rawData } = data;
         let invoiceData: Prisma.InvoiceCreateInput;
@@ -95,10 +110,18 @@ export async function addInvoice(data: InvoiceData): Promise<ServerResponse> {
 export async function deleteInvoices(invoiceNumbers: string[]): Promise<ServerResponse> {
     try {
         //confirm user is authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to delete Invoices.",
+                code: 'ACCESS_DENIED'
+            }
         }
 
         const response = await prisma.invoice.deleteMany({
@@ -137,10 +160,18 @@ export async function deleteInvoices(invoiceNumbers: string[]): Promise<ServerRe
 export async function getRecentInvoices(length: number = 5): Promise<ServerResponse<InvoiceData[]>> {
     try {
         //confirm user is authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to get recent Invoices.",
+                data: []
+            }
         }
 
         const recentInvoices = await prisma.invoice.findMany({

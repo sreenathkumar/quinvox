@@ -10,10 +10,18 @@ import { revalidatePath } from "next/cache";
 export async function getBillers(billerId?: string) {
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("Not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                data: [],
+                message: "Access denied. Upgrade to Pro plan to access billers."
+            }
         }
 
         if (billerId) {
@@ -61,10 +69,18 @@ export async function getBillers(billerId?: string) {
 export async function addBiller(data: BillerData) {
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to add billers.",
+                data: null
+            }
         }
 
         //check if biller already exists
@@ -117,10 +133,18 @@ export async function addBiller(data: BillerData) {
 export async function updateBiller(billerId: string, data: BillerData) {
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to update billers.",
+                data: null
+            }
         }
 
         //update the biller data
@@ -166,10 +190,18 @@ export async function updateBiller(billerId: string, data: BillerData) {
 export async function deleteBiller(billerId: string) {
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to delete biller.",
+                data: null
+            }
         }
 
         //delete the biller
@@ -215,10 +247,18 @@ export async function searchBillers(query: string) {
 
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to search billers.",
+                data: null
+            }
         }
 
         //search billers from the database

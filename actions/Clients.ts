@@ -8,10 +8,18 @@ import { revalidatePath } from "next/cache";
 export async function getClients() {
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to get clients.",
+                data: []
+            }
         }
 
         //fetch clients from the database
@@ -56,10 +64,18 @@ export async function searchClients(query: string) {
 
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to search clients.",
+                data: null
+            }
         }
 
         //search clients from the database
@@ -77,7 +93,7 @@ export async function searchClients(query: string) {
             return {
                 success: true,
                 message: "No clients found",
-                data: []
+                data: null
             }
         }
 
@@ -100,10 +116,18 @@ export async function searchClients(query: string) {
 export async function addClient(data: ClientData) {
     try {
         //check if authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error("User not authenticated");
+        }
+
+        if (!isPro) {
+            return {
+                success: false,
+                message: "Access denied. Upgrade to Pro plan to add client.",
+                data: null
+            }
         }
 
         //check if client already exists

@@ -18,9 +18,25 @@ async function isServerAuthenticated() {
             }
         }
 
+        //check user plan
+        if (user.plan === 'pro' || user.plan === 'trial') {
+            //verify if the pro/trial subscription is still valid
+            const currentDate = new Date();
+            const isValid = user.planExpires && new Date(user.planExpires) > currentDate;
+
+            if (isValid) {
+                return {
+                    authenticated: true,
+                    user,
+                    isPro: true
+                }
+            }
+        }
+
         return {
             authenticated: true,
-            user
+            user,
+            isPro: false
         };
     } catch (error: any) {
         console.error("Error checking authentication:", error?.message);

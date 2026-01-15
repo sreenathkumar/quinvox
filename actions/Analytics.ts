@@ -33,10 +33,14 @@ interface ClientStatResult {
 export async function getAnalytics() {
     try {
         //check if the user is authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error('User not authenticated');
+        }
+
+        if (!isPro) {
+            throw new Error('Analytics not available for free or expired plans');
         }
 
         const [invoiceStats, clientStats] = await Promise.all([
@@ -69,14 +73,19 @@ export async function getRevenueBarData({ from, to, timezone }: { from: string, 
     const diff = differenceInCalendarDays(end, start);
     const groupingUnit = getGroupingUnit(diff)//return days/week/month/year
     const weekStart = getWeekDay(timezone); //get the week start day based on timezone
-    //console.log('Generating revenue bar data for:', { from, to, timezone, start, end, groupingUnit, weekStart, diff });
+
     try {
         // check the user is authenticated
-        const { authenticated, user } = await isServerAuthenticated();
+        const { authenticated, user, isPro } = await isServerAuthenticated();
 
         if (!authenticated || !user) {
             throw new Error('User not authenticated');
         }
+
+        if (!isPro) {
+            throw new Error('Analytics not available for free or expired plans');
+        }
+
 
         //run the mongodb aggregation for data.
         const data = await prisma.invoice.aggregateRaw({
