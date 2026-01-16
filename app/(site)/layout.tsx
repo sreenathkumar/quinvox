@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 
 
@@ -6,6 +7,7 @@ function SiteLayout({ children }: { children: React.ReactNode }) {
         <>
             <Header />
             {children}
+            <Footer />
         </>
     )
 }
