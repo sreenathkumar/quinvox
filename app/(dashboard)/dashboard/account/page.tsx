@@ -6,21 +6,26 @@ import isServerAuthenticated from "@/lib/check-server-auth"
 import BillerForm from "./components/biller-form";
 import SingleBiller from "./components/single-biller-card";
 import { Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 async function AccountPage() {
     const { user } = await isServerAuthenticated();
     const { data: billers } = await getBillers();
     return (
         <div className="px-5 py-6">
-            <div className="flex items-center gap-10">
-                <Avatar className="size-24">
-                    <AvatarImage src={user?.image || undefined} className="rounded-full bg-muted" />
-                    <AvatarFallback className="text-4xl font-bold">{user?.email?.[0].toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-4xl font-extrabold">{user?.name}</h2>
-                    <p className="text-base text-muted-foreground ">{user?.email}</p>
+            <div className="flex items-center justify-between gap-10">
+                <div className="flex items-start gap-10">
+                    <Avatar className="size-24">
+                        <AvatarImage src={user?.image || undefined} className="rounded-full bg-muted" />
+                        <AvatarFallback className="text-4xl font-bold">{user?.email?.[0].toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start gap-2">
+
+                        <h2 className="text-4xl font-extrabold">{user?.name}</h2>
+                        <p className="text-base text-muted-foreground ">{user?.email}</p>
+                    </div>
                 </div>
+                <Badge variant='outline' className="block capitalize bg-muted">{user?.plan}</Badge>
             </div>
             <Card className="mt-16">
                 <CardHeader className="flex flex-row justify-between items-center">
@@ -66,7 +71,6 @@ async function AccountPage() {
                     }
                 </CardContent>
             </Card>
-
         </div>
     )
 }
