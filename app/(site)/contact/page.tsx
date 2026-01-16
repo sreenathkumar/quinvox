@@ -38,11 +38,11 @@ function ContactPage() {
                                 title="Email Us"
                                 content={<a href="mailto:admin@pixelatedcode.com" className="hover:underline">admin@pixelatedcode.com</a>}
                             />
-                            <ContactInfoItem
+                            {/* <ContactInfoItem
                                 icon={Phone}
                                 title="Call Us"
                                 content="Mon-Fri, 9am - 5pm GMT"
-                            />
+                            /> */}
                             <ContactInfoItem
                                 icon={MapPin}
                                 title="Visit Us"
