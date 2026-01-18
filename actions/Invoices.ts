@@ -15,10 +15,7 @@ export async function getInvoices() {
         }
 
         if (!isPro) {
-            return {
-                success: false,
-                message: "Access denied. Upgrade to Pro plan to get Invoices.",
-            }
+            return []
         }
 
         const response = await prisma.invoice.findMany({
