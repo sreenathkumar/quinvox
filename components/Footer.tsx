@@ -5,12 +5,12 @@ function Footer() {
         <footer className="bg-background border-t py-4 text-center text-sm text-muted-foreground">
             <div className="container mx-auto flex">
                 <div className="text-xs text-muted-foreground">
-                    A product of <Link className="underline" href='/'>Pixelated Code</Link>. &copy; {new Date().getFullYear()} All rights reserved.
+                    &copy; {new Date().getFullYear()} All rights reserved. Made by <Link href='https://pixelatedcode.com' className="underline">Pixelated Code</Link>
                 </div>
                 <div className="ml-auto">
                     <ul className="flex items-center gap-3">
                         <li className="text-xs underline">
-                            <Link href='/about-us'>
+                            <Link href='/about'>
                                 About Us
                             </Link>
                         </li>

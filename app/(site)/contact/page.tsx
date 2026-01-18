@@ -36,7 +36,7 @@ function ContactPage() {
                             <ContactInfoItem
                                 icon={Mail}
                                 title="Email Us"
-                                content={<a href="mailto:admin@pixelatedcode.com" className="hover:underline">admin@pixelatedcode.com</a>}
+                                content={<a href="mailto:support@quinvox.app" className="hover:underline">support@quinvox.app</a>}
                             />
                             {/* <ContactInfoItem
                                 icon={Phone}
