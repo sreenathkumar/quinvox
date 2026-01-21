@@ -5,9 +5,24 @@ import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import './globals.css';
 
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'https://quinvox.app';
+
 export const metadata: Metadata = {
-  title: 'Quinvox | Free Online Invoice Creator | Quick Invoice Tool',
-  description: 'Create professional invoices fast with Quinvox — the Quick Invoice tool. Free online invoice creator and PDF maker for businesses and freelancers.',
+  title: 'Quinvox | Free Invoicing for Builders',
+  description: 'Create professional invoices within 60s with Quinvox - the Quick Invoice tool. Free online invoice creator and PDF maker for businesses and freelancers.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  openGraph: {
+    title: 'Quinvox | Free Invoicing for Builders',
+    description: 'Create professional invoices within 60s with Quinvox - the Quick Invoice tool. Free online invoice creator and PDF maker for businesses and freelancers.',
+    url: baseURL,
+    siteName: 'Quinvox',
+    images: [
+      { url: `${baseURL}/og-image.webp`, width: 1200, height: 630, alt: 'Quinvox' }
+    ]
+  }
 };
 
 export default function RootLayout({
