@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { InvoiceProvider } from '@/contexts/InvoiceProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css';
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'https://quinvox.app';
@@ -46,6 +47,7 @@ export default function RootLayout({
           {children}
         </InvoiceProvider>
         <Toaster />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
       </body>
     </html>
   );
