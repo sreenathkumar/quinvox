@@ -18,7 +18,7 @@ function PrivacyPage() {
               Overview
             </h2>
             <p className="leading-7 [&:not(:first-child)]:mt-6">
-              Quinvox is a product of <Link href='https://pixelatedcode.com'><strong>Pixelated Code</strong></Link>. We value your privacy and are committed to protecting your personal information. This policy explains what data we collect specifically for our invoicing software.
+              Quinvox is committed to protecting your privacy and personal information. This policy explains the specific data we collect to provide and improve our invoicing services.
             </p>
           </section>
 
@@ -87,8 +87,7 @@ function PrivacyPage() {
                 <strong>The "30-Day Cleanup":</strong> For free trial accounts that never upgrade and show no login activity for 30 days, we reserve the right to purge all data to minimize our "data footprint."
               </li>
               <li>
-                <strong>Tax Records:</strong>
-                Note that Paddle may retain transaction records for up to 7 years to comply with global tax laws.
+                <strong>Tax Records:</strong> Note that Paddle may retain transaction records for up to 7 years to comply with global tax laws.
               </li>
             </ul>
           </section>

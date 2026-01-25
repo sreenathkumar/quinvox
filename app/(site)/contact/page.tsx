@@ -46,7 +46,7 @@ function ContactPage() {
                             <ContactInfoItem
                                 icon={MapPin}
                                 title="Visit Us"
-                                content="Khulna, Bangladesh"
+                                content="Satkhira, Khulna, Bangladesh"
                             />
                         </Card>
                     </div>

@@ -37,7 +37,7 @@ function PricingSection() {
                             <FeatureItem available={true}>Create & edit invoices</FeatureItem>
                             <FeatureItem available={true}>Local and Cloud storage</FeatureItem>
                             <FeatureItem available={true}>Export and Print as PDF</FeatureItem>
-                            <FeatureItem available={true}>Cloud sync on all devices</FeatureItem>
+                            <FeatureItem available={true}>Cloud sync on all devices (2 devices)</FeatureItem>
                             <FeatureItem available={true}>Saved clients, biller profiles & autofill</FeatureItem>
                             <FeatureItem available={true}>Multiple premium templates</FeatureItem>
                             <FeatureItem available={true}>Data backup + restore</FeatureItem>
