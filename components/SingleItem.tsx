@@ -26,7 +26,7 @@ function SingleItem({ form, onRemove, index }: SingleItemProps) {
         component={Input}
         placeholder="Item Description"
       />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-6 gap-3">
         <FormFieldWrapper
           control={form.control}
           name={`items.${index}.quantity`}
@@ -35,6 +35,7 @@ function SingleItem({ form, onRemove, index }: SingleItemProps) {
           component={Input}
           placeholder="1"
           min={1}
+          className="col-span-3 md:col-span-2"
         />
         <FormFieldWrapper
           control={form.control}
@@ -43,9 +44,10 @@ function SingleItem({ form, onRemove, index }: SingleItemProps) {
           type="number"
           component={Input}
           placeholder="10"
+          className="col-span-3 md:col-span-2"
         />
 
-        <div className="flex items-center justify-between bg-muted px-4 rounded-md">
+        <div className="flex items-center justify-between bg-muted p-4 rounded-md col-span-6 md:col-span-2 ">
           <span aria-label="item_price" className="text-sm font-medium">
             {formatCurrency(quantity * unitPrice)}
           </span>

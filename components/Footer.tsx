@@ -3,11 +3,8 @@ import Link from "next/link"
 function Footer() {
     return (
         <footer className="bg-background border-t py-4 text-center text-sm text-muted-foreground">
-            <div className="container mx-auto flex">
-                <div className="text-xs text-muted-foreground">
-                    &copy; {new Date().getFullYear()} All rights reserved. Made by <Link href='https://pixelatedcode.com' className="underline">Pixelated Code</Link>
-                </div>
-                <div className="ml-auto">
+            <div className="container mx-auto flex flex-col items-center gap-3 md:flex-row-reverse md:justify-between">
+                <div className="">
                     <ul className="flex items-center gap-3">
                         <li className="text-xs underline">
                             <Link href='/about'>
@@ -25,6 +22,9 @@ function Footer() {
                             </Link>
                         </li>
                     </ul>
+                </div>
+                <div className="text-xs text-muted-foreground md:order-1">
+                    &copy; {new Date().getFullYear()} All rights reserved. Made by <Link href='https://pixelatedcode.com' className="underline">Pixelated Code</Link>
                 </div>
             </div>
         </footer>

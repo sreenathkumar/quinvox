@@ -7,17 +7,16 @@ import {
     CardTitle
 } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { formatCurrency } from '@/lib/utils';
 import { format, formatDistance } from 'date-fns';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Download, Printer } from 'lucide-react';
+import { useRef } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { useReactToPrint } from 'react-to-print';
 import TableRowItem from './TableRowItem';
 import { Button } from './ui/button';
-import { useReactToPrint } from 'react-to-print';
-import { useRef } from 'react';
 
 interface PreviewProps {
     form: UseFormReturn<any>;
@@ -60,12 +59,12 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
         pdf.save(`Invoice-${form.getValues('invoiceNumber')}.pdf`);
     };
 
-    const logoPlaceholder = PlaceHolderImages.find((p) => p.id === 'logo');
+
     return (
         <Card>
-            <CardHeader className="flex-row items-center justify-between">
+            <CardHeader className="flex-row justify-between items-start space-y-0">
                 <CardTitle>Preview</CardTitle>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap justify-end">
                     <Button variant="outline" size="sm" onClick={generatePDF}>
                         <Download className="mr-2 h-4 w-4" /> Download
                     </Button>
@@ -83,19 +82,19 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
 
                             {/* Invoice Details - Top Right */}
                             <div className="grid grid-cols-3 gap-8 mb-12">
-                                <div className="space-y-1">
+                                <div className="space-y-1 col-span-3 sm:col-span-1">
                                     <p className="text-sm text-black font-semibold mb-2">Payable: {formatCurrency(total)}</p>
                                     <p className="text-xs text-gray-600">Dues {format(form.watch('dueDate'), 'P')}</p>
                                     <p className="text-xs text-gray-600">Issued {format(form.watch('date'), 'P')}</p>
                                     <p className="text-xs text-gray-600" suppressHydrationWarning={true} >Ref. {form.getValues('invoiceNumber')}</p>
                                 </div>
-                                <div className='space-y-1'>
+                                <div className='space-y-1 col-span-3 sm:col-span-1'>
                                     <p className="text-sm font-semibold text-black mb-2">Billed to</p>
                                     <p className="text-xs font-semibold text-gray-600">{form.watch('clientName')}</p>
                                     <p className="text-xs text-gray-600">{form.watch('clientType')}</p>
                                     <p className="text-xs text-gray-600">{form.watch('clientAddress')}</p>
                                 </div>
-                                <div className='space-y-1'>
+                                <div className='space-y-1 col-span-3 sm:col-span-1'>
                                     <p className="text-sm font-semibold text-gray-600 mb-2">From</p>
                                     <p className="text-xs font-semibold text-gray-600">{form.watch('billerName')}</p>
                                     <p className="text-xs text-gray-600">{form.watch('billerAddress')}</p>

@@ -132,7 +132,7 @@ export default function Home() {
               <BillerInfo form={form} user={user} />
               <div className="p-6 mt-4 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col gap-6">
                 <AdditonalInfo form={form} />
-                <div className='flex items-center gap-4'>
+                <div className='flex items-center gap-4 flex-wrap md:flex-nowrap'>
                   <Button type="submit" form="invoice-form" className="bg-accent text-accent-foreground hover:bg-accent/90 grow">
                     <Save className="mr-2 h-4 w-4" /> {form.getValues('invoiceNumber') === activeInvoiceId ? 'Update' : 'Save'} Invoice
                   </Button>
