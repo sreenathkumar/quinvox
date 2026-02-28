@@ -48,14 +48,28 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
 
         toast({ title: 'Generating PDF...', description: 'Please wait a moment.' });
 
-        const canvas = await html2canvas(invoiceElement, { scale: 2 });
+        const originalWidth = invoiceElement.style.width;
+        const originalTransform = invoiceElement.style.transform;
+
+        // Scale down the invoice for better PDF quality
+        invoiceElement.style.width = '800px';
+        invoiceElement.style.transform = 'scale(0.75)';
+
+        const canvas = await html2canvas(invoiceElement, { scale: 2, useCORS: true });
+
+        // Restore original styles
+        invoiceElement.style.width = originalWidth;
+        invoiceElement.style.transform = originalTransform;
+
         const imgData = canvas.toDataURL('image/png');
 
+
+        const margin = 10; // 10mm margin
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfWidth = pdf.internal.pageSize.getWidth() - margin * 2;
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'PNG', margin, margin, pdfWidth, pdfHeight);
         pdf.save(`Invoice-${form.getValues('invoiceNumber')}.pdf`);
     };
 
@@ -74,8 +88,8 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
                 </div>
             </CardHeader>
             <CardContent>
-                <div ref={pdfRef} id='invoice-pdf' className="bg-white p-6">
-                    <div className="max-w-4xl mx-auto flex flex-col h-full">
+                <div ref={pdfRef} id='invoice-pdf' className="bg-white p-6 overflow-x-auto lg:overflow-hidden">
+                    <div className="max-w-4xl w-[672px] mx-auto flex flex-col h-full lg:w-auto">
                         {/* Header Section */}
                         <div className="mb-8">
                             <h1 className="text-4xl text-black font-bold mb-8">Invoice</h1>
@@ -167,7 +181,6 @@ function Preview({ form, watchedItems, watchedTax, total, taxAmount, subtotal }:
                         </div>
                     </div>
                 </div>
-
             </CardContent>
         </Card>
     )
