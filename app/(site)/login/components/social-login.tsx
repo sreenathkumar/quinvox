@@ -2,14 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import authClient from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 
 function SocialLogin() {
+    const params = useSearchParams();
+    const callbackURL = params.get('from') || '/';
+
     async function handleSocialSignup(provider: string) {
         switch (provider) {
             case 'Google':
                 const googleResponse = await authClient.signIn.social({
                     provider: 'google',
+                    callbackURL,
                 });
 
                 if (googleResponse.error) {
@@ -24,6 +28,7 @@ function SocialLogin() {
             case 'Facebook':
                 const fbResponse = await authClient.signIn.social({
                     provider: 'facebook',
+                    callbackURL,
                 });
 
                 if (fbResponse.error) {
@@ -38,6 +43,7 @@ function SocialLogin() {
             case 'Linkedin':
                 const liResponse = await authClient.signIn.social({
                     provider: 'linkedin',
+                    callbackURL,
                 });
 
                 if (liResponse.data?.url) {
