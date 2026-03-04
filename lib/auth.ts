@@ -28,7 +28,7 @@ export const auth = betterAuth({
         additionalFields: {
             role: { type: 'string', defaultValue: 'user', input: false },
             plan: { type: 'string', defaultValue: 'free', input: false },
-            planExpires: { type: 'date', defaultValue: null, input: false },
+            status: { type: 'string', defaultValue: 'active', input: false },
             trialUsed: { type: 'boolean', defaultValue: false, input: false },
         },
     }
