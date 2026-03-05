@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css';
+import { PlanProvider } from '@/contexts/PlanProvider';
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'https://quinvox.app';
 
@@ -43,8 +44,10 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background text-foreground flex flex-col')}>
         <InvoiceProvider>
-          <SyncListener />
-          {children}
+          <PlanProvider>
+            <SyncListener />
+            {children}
+          </PlanProvider >
         </InvoiceProvider>
         <Toaster />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
