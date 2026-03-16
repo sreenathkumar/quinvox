@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from "better-auth/api";
@@ -8,12 +10,12 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, { provider: 'mongodb' }),
     socialProviders: {
         google: {
-            clientId: process.env.GOOGLE_CLIENT_ID || '',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         },
         linkedin: {
-            clientId: process.env.LINKEDIN_CLIENT_ID || '',
-            clientSecret: process.env.LINKEDIN_CLIENT_SECRET || '',
+            clientId: process.env.LINKEDIN_CLIENT_ID!,
+            clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
         }
     },
     hooks: {
