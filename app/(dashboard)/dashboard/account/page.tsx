@@ -1,12 +1,14 @@
 import { getBillers } from "@/actions/Billers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import isServerAuthenticated from "@/lib/check-server-auth"
-import BillerForm from "./components/biller-form";
-import SingleBiller from "./components/single-biller-card";
+import isServerAuthenticated from "@/lib/check-server-auth";
 import { Plus } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import BillerForm from "./components/biller-form";
+import CancelSubscription from "./components/cancel-btn";
+import PaymentCard from "./components/payment-card";
+import SingleBiller from "./components/single-biller-card";
 
 async function AccountPage() {
     const { user } = await isServerAuthenticated();
@@ -20,18 +22,26 @@ async function AccountPage() {
                         <AvatarFallback className="text-4xl font-bold">{user?.email?.[0].toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col items-start gap-2">
-
                         <h2 className="text-4xl font-extrabold">{user?.name}</h2>
                         <p className="text-base text-muted-foreground ">{user?.email}</p>
                     </div>
                 </div>
-                <Badge variant='outline' className="block capitalize bg-muted">{user?.plan}</Badge>
+                <div className="flex flex-col items-end justify-start">
+                    <Badge variant='outline' className="capitalize text-xl bg-muted">{user?.plan}
+                        {user?.plan !== 'free' && <span className={`ml-1 text-xs ${(user?.status === 'canceled' || user?.status === 'paused') && 'text-red-500'}`}>({user?.status})</span>}
+                    </Badge>
+                    <div className="flex justify-between items-center gap-2">
+                        {
+                            (user?.status === 'trialing' || user?.status === 'active') && <CancelSubscription user={user} />
+                        }
+                    </div>
+                </div>
             </div>
             <Card className="mt-16">
                 <CardHeader className="flex flex-row justify-between items-center">
                     <div className="flex flex-col gap-1">
                         <CardTitle>
-                            Billing profiles
+                            Biller profiles
                         </CardTitle>
                         <CardDescription>
                             Manage your billing profiles and payment methods.
@@ -51,7 +61,7 @@ async function AccountPage() {
                 <CardContent className="flex flex-col justify-center items-center py-10">
                     {
                         billers.length > 0 ? (
-                            <ul className="list-disc space-y-2 w-full s">
+                            <ul className="list-disc space-y-2 w-full">
                                 {billers.map((biller) => (
                                     <SingleBiller key={biller.id} {...biller} />
                                 ))}
@@ -71,6 +81,7 @@ async function AccountPage() {
                     }
                 </CardContent>
             </Card>
+            <PaymentCard />
         </div>
     )
 }

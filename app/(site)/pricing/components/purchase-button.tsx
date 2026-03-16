@@ -1,79 +1,111 @@
 'use client'
-import { subscribeToPlan } from '@/actions/subscription';
-import { Button } from '@/components/ui/button'
+import { getPriceId, subscribeToFree } from '@/actions/subscription';
+import { Button } from '@/components/ui/button';
 import { usePlan } from '@/contexts/PlanProvider';
 import { toast } from '@/hooks/use-toast';
 import authClient from '@/lib/auth-client';
-import { getUserPlan } from '@/lib/check-plan';
 import { redirect } from 'next/navigation';
 
 function BuyPlanBtn({ name }: { name?: string }) {
     const { data: session } = authClient.useSession();
     const user = session?.user;
-    const userPlan = getUserPlan(user);
-    const { isAnnual } = usePlan();
+    const { isAnnual, paddle } = usePlan();
 
     const handleSelectPlan = async (planName: string) => {
         if (!user) {
             redirect('/login')
         } else {
-            const res = await subscribeToPlan({ name: planName, playType: isAnnual ? 'annual' : 'monthly' });
+            if (planName === 'pro') {
+                const { priceId, error } = await getPriceId(user.id, isAnnual);
 
-            if (res?.success) {
-                toast({
-                    title: res.success ? 'Success' : 'Error',
-                    description: res.message,
-                    variant: res.success ? 'default' : 'destructive',
+                if (error || !priceId) {
+                    toast({
+                        title: 'Error',
+                        description: error,
+                        variant: 'destructive',
+                    });
+                    return;
+                }
+
+                paddle?.Checkout.open({
+                    customer: {
+                        email: user.email,
+                    },
+                    items: [
+                        {
+                            priceId,
+                            quantity: 1,
+                        }
+                    ],
+                    customData: {
+                        "app_user_id": user.id,
+                    }
                 })
             } else {
-                toast({
-                    title: 'Error',
-                    description: 'Something went wrong. Please try again.',
-                    variant: 'destructive',
-                })
+                const res = await subscribeToFree(user.id);
+
+                if (res && res.success) {
+                    toast({
+                        title: 'Subscription Updated',
+                        description: res.message,
+                    })
+                } else {
+                    toast({
+                        title: 'Subscription Update Failed',
+                        description: 'An error occurred while updating your subscription. Please try again later.',
+                        variant: 'destructive',
+                    })
+                }
             }
         }
     }
 
     //generate button based on user plan
-    const generateBtnText = () => {
-        //Logged out state (Same as before)
+    function generateButtonText() {
         if (!user) {
-            return name === 'free' ? 'Start for free' : 'Start free trial';
+            return name === 'pro' ? 'Start Free Trial' : 'Current Plan';
         }
 
-        if (userPlan?.plan === 'pro' || userPlan?.plan === 'trial') {
-            if (userPlan.plan === 'pro') {
-                if (userPlan.status === 'active') {
-                    return name === 'free' ? 'Downgrade' : 'Current Plan';
-                } else {
-                    return name === 'free' ? 'Downgrade' : 'Renew Plan';
-                }
-            } else {
-                if (userPlan.status === 'active') {
-                    return name === 'free' ? 'Downgrade' : 'Switch from Trial to Pro';
-                } else {
-                    return name === 'free' ? 'Downgrade' : 'Upgrade to Pro';
-                }
+        // FREE PLAN USER
+        if (user.plan === 'free') {
+            if (name === 'free') {
+                return 'Current Plan';
+            }
+            if (name === 'pro') {
+                return (user.trialUsed ? 'Upgrade to Pro' : 'Start Free Trial');
             }
         }
 
-        // user on free plan and trial is ended
-        if (userPlan?.plan === 'free' && user.trialUsed) {
-            return name === 'free' ? 'Start for free' : 'Upgrade to Pro';
+        // PRO PLAN USER
+        if (user.plan === 'pro') {
+            if (user.status === 'trialing') {
+                return (name === 'free' ? 'Downgrade' : 'Active Trial');
+
+            }
+
+            if (user.status === 'active') {
+                return (name === 'free' ? 'Downgrade' : 'Current Plan');
+
+            }
+
+            if (user.status === 'past_due') {
+                return (name === 'free' ? 'Downgrade' : 'Update Payment');
+            }
+
+            if (user.status === 'paused') {
+                return (name === 'free' ? 'Downgrade' : 'Resume Plan');
+
+            }
         }
-
-        return name === 'free' ? 'Start for free' : 'Start free trial';
     }
-
     return (
         <Button
             variant="secondary"
             className='w-full bg-accent text-foreground'
             onClick={() => handleSelectPlan(name || 'free')}
-            disabled={userPlan?.plan === 'free' && name === 'free'}
+            disabled={user?.plan === 'free' && name === 'free'}
         >
-            {generateBtnText()}
+            {generateButtonText()}
         </Button>
     )
 }

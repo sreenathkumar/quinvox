@@ -7,6 +7,7 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import SocialLogin from './components/social-login';
+import { Suspense } from "react";
 
 
 async function SigninPage() {
@@ -21,7 +22,9 @@ async function SigninPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SocialLogin />
+          <Suspense fallback={<div>Loading...</div>}>
+            <SocialLogin />
+          </Suspense>
         </CardContent>
       </Card>
     </main>

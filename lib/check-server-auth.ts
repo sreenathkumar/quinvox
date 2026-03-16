@@ -49,7 +49,7 @@ async function isServerAuthenticated() {
             isPro
         }
     } catch (error: any) {
-        console.error("Error checking authentication:", error?.message);
+        console.log("Error checking authentication:", error?.message);
         return defaultState
     }
 }

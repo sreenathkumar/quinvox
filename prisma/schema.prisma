@@ -9,22 +9,26 @@ datasource db {
 }
 
 model User {
-  id            String    @id @map("_id")
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  role          Role?     @default(user)
-  plan          Plan      @default(free)  
-  planExpires   DateTime? 
-  trialUsed     Boolean   @default(false) 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  invoices      Invoice[]
-  clients       Client[]
-  billers       Biller[]
+  id                    String          @id @map("_id")
+  name                  String
+  email                 String
+  emailVerified         Boolean         @default(false)
+  image                 String?
+  role                  Role           @default(user)
+  plan                  Plan            @default(free)
+  status                PlanStatus      @default(none)
+  subscriptions         Subscription[]
+  planExpires           DateTime? 
+  trialUsed             Boolean         @default(false) 
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  sessions              Session[]
+  accounts              Account[]
+  invoices              Invoice[]
+  clients               Client[]
+  billers               Biller[]
+  customerId            String?
+  currentSubscription   String?
 
   @@unique([email])
   @@map("user")
@@ -35,6 +39,15 @@ enum Plan{
   trial
   pro
 }
+enum PlanStatus{
+  none
+  paid
+  active
+  canceled
+  past_due
+  paused
+  trialing
+}
 
 enum Role{
   admin
@@ -42,74 +55,74 @@ enum Role{
 }
 
 model Session {
-  id        String   @id @map("_id")
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @map("_id")
+  expiresAt   DateTime
+  token       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ipAddress   String?
+  userAgent   String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id @map("_id")
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  id                      String    @id @map("_id")
+  accountId               String
+  providerId              String
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken             String?
+  refreshToken            String?
+  idToken                 String?
+  accessTokenExpiresAt    DateTime?
+  refreshTokenExpiresAt   DateTime?
+  scope                   String?
+  password                String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   @@map("account")
 }
 
 model Verification {
-  id         String   @id @map("_id")
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  id          String   @id @map("_id")
+  identifier  String
+  value       String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("verification")
 }
 
 model Invoice {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String   
-  user          User     @relation(fields:[userId], references:[id])
-  invoiceNumber String   @unique
-  biller        Biller?  @relation(fields:[billerId], references:[id])
-  billerId      String?  @db.ObjectId
-  billerName    String
-  billerEmail   String
-  billerPhone   String?
-  billerAddress String
-  client        Client?   @relation(fields:[clientId], references:[id])
-  clientId      String?   @db.ObjectId
-  clientType    ProfileType
-  clientName    String
-  clientAddress String
-  clientEmail   String
-  date          DateTime
-  dueDate       DateTime
-  items         Item[]
-  tax           Float?
-  notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   
+  user            User     @relation(fields:[userId], references:[id])
+  invoiceNumber   String   @unique
+  biller          Biller?  @relation(fields:[billerId], references:[id])
+  billerId        String?  @db.ObjectId
+  billerName      String
+  billerEmail     String
+  billerPhone     String?
+  billerAddress   String
+  client          Client?   @relation(fields:[clientId], references:[id])
+  clientId        String?   @db.ObjectId
+  clientType      ProfileType
+  clientName      String
+  clientAddress   String
+  clientEmail     String
+  date            DateTime
+  dueDate         DateTime
+  items           Item[]
+  tax             Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 enum ProfileType{
@@ -119,21 +132,21 @@ enum ProfileType{
 }
 
 type Item{
-  id          String
-  description String
-  quantity    Int 
-  unit_price  Float
+  id            String
+  description   String
+  quantity      Int 
+  unit_price    Float
 }
 
 model UserQuery{
-  id        String        @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String
-  subject   String
-  message   String
-  status    QueryStatus?  @default(pending)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String
+  subject     String
+  message     String
+  status      QueryStatus?  @default(pending)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 enum QueryStatus{
@@ -142,31 +155,68 @@ enum QueryStatus{
 }
 
 model Client{
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   
-  user      User        @relation(fields:[userId], references:[id])
-  type      ProfileType
-  name      String
-  email     String      
-  address   String
-  phone     String?
-  country   String?
-  invoices  Invoice[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   
+  user        User        @relation(fields:[userId], references:[id])
+  type        ProfileType
+  name        String
+  email       String      
+  address     String
+  phone       String?
+  country     String?
+  invoices    Invoice[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Biller{
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   
-  user      User        @relation(fields:[userId], references:[id])
-  type      ProfileType
-  name      String
-  email     String      
-  address   String
-  phone     String?
-  country   String?
-  invoices  Invoice[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   
+  user        User          @relation(fields:[userId], references:[id])
+  type        ProfileType
+  name        String
+  email       String      
+  address     String
+  phone       String?
+  country     String?
+  invoices    Invoice[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Subscription{
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  occurredAt        DateTime
+  subsId            String?    @unique
+  status            String
+  pausedAt          DateTime?
+  canceledAt        DateTime?
+  customerId        String
+  billingCycle      Json?
+  currencyCode      String?
+  nextBilledAt      DateTime?
+  txnId             String?    @unique
+  collectionMode    String?
+  billingPeriod     Json?
+  scheduledChange   Json?
+  userId            String?    
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+
+  user              User? @relation(fields: [userId], references:[id])
+}
+
+model WebhookEvent{
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  eventId     String    @unique
+  eventType   String
+  occurredAt   String 
+}
+
+model Setting{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique 
+  value     String           
+  updatedAt DateTime @updatedAt
 }

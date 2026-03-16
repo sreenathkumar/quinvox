@@ -1,10 +1,46 @@
 'use server'
 
 import { User } from "@/lib/auth";
-import isServerAuthenticated from "@/lib/check-server-auth"
+import isServerAuthenticated from "@/lib/check-server-auth";
+import paddleServer from "@/lib/paddle/paddle-backend";
 import prisma from "@/lib/prisma";
-import { addDays, addMonths, addYears } from "date-fns";
+import { SubscriptionCollection } from "@paddle/paddle-node-sdk";
+import { addDays } from "date-fns";
 import { saveUserQuery } from "./userQuery";
+import { revalidatePath } from "next/cache";
+
+export async function getSubscriptions() {
+    try {
+        const { authenticated, user } = await isServerAuthenticated();
+
+        if (!authenticated || !user) {
+            return {
+                success: false,
+                error: "User is not authenticated",
+            }
+        }
+
+        const subscriptions = await prisma.subscription.findMany({
+            where: {
+                userId: user.id,
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        return {
+            success: true,
+            data: subscriptions || [],
+        }
+    } catch (error: any) {
+        console.error("Error fetching subscriptions: ", error?.message)
+        return {
+            success: false,
+            error: error?.message || "Unknown error occurred",
+        }
+    }
+}
 
 export async function subscribeToPlan({ name, playType }: { name: string, playType: 'monthly' | 'annual' }) {
     // check the user is logged in
@@ -87,16 +123,34 @@ export async function subscribeToPlan({ name, playType }: { name: string, playTy
 }
 
 //function to downgrade user to free plan
-async function subscribeToFree(userId: string) {
-    const res = await prisma.user.update({
-        where: { id: userId },
-        data: {
-            plan: 'free',
-            planExpires: null,
-        }
-    });
+export async function subscribeToFree(userId: string) {
+    try {
+        //update the subscription 
+        const res = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                plan: 'free',
+                status: 'none',
+                planExpires: null,
+            }
+        });
 
-    return res;
+        if (!res) {
+            throw new Error('Failed to subscribe to free plan');
+        }
+
+        return {
+            success: true,
+            message: 'Successfully subscribed to free plan',
+        };
+    } catch (error: any) {
+        console.log('Error in subscribeToFree: ', error.message);
+        return {
+            success: false,
+            message: error.message,
+        };
+    }
+
 }
 
 //function to start trial for user
@@ -115,36 +169,174 @@ async function subscribeToTrial({ user }: { user: User }) {
     return res;
 }
 
-//function to upgrade user to pro plan
-async function subscribeToPro({ user, planType }: { user: User, planType: 'monthly' | 'annual' }) {
-    // add the not used trial/unused period to the new plan expiry date
-    const startDate = user.planExpires >= new Date() ? user.planExpires : new Date();
-    let planExpires: Date;
-
-    if (planType === 'annual') {
-        planExpires = addYears(startDate, 1);
-
-        const res = await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                plan: 'pro',
-                planExpires,
-                trialUsed: true,
-            }
-        })
-
-        return res;
-    } else {
-        //monthly plan
-        planExpires = addMonths(startDate, 1);
-        const res = await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                plan: 'pro',
-                planExpires,
-                trialUsed: true,
+//function return the price id based on the plan type
+export async function getPriceId(userId: string, isAnnual: boolean) {
+    try {
+        //fetch the price id from database based on the plan type
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                subscriptions: true,
             }
         });
-        return res;
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (user.subscriptions.length > 0 && user.trialUsed) {
+            return {
+                priceId: isAnnual ? 'pri_01kjx2dkwfpc3p020sc36twnsa' : 'pri_01kjx2c7cbxd58f27bvj81472h',
+            }
+        }
+
+        return {
+            priceId: isAnnual ? 'pri_01khe842bt4fyvcn3dn46evs3r' : 'pri_01khe82vxa83bc24md9ts8yhkq'
+        }
+
+    } catch (error: any) {
+        return {
+            error: error.message,
+        }
+    }
+
+};
+
+//function to pause subscription for user
+export async function pauseSubscription(userId: string) {
+    try {
+        const activeSubscription = await prisma.subscription.findFirst({
+            where: {
+                userId,
+                OR: [
+                    { status: 'active' },
+                    { status: 'trialing' },
+                    { status: 'paid' },
+                ]
+            }
+        });
+
+        if (!activeSubscription || !activeSubscription.subsId) {
+            throw new Error('No active subscription found to pause');
+        }
+
+        const result = await paddleServer.subscriptions.pause(activeSubscription.subsId, {
+            effectiveFrom: 'next_billing_period'
+        });
+
+        if (!result) {
+            throw new Error('Failed to pass the pause request to Paddle');
+        }
+
+        return {
+            success: true,
+            message: 'Subscription paused successfully, it will take effect from next billing period',
+        }
+
+    } catch (error: any) {
+        console.log('Error in pauseSubscription: ', error.message);
+
+        return {
+            success: false,
+            message: error.message,
+        }
+    }
+}
+
+//function to sync subscription with paddle, this function can be used in polling to get and update the latest subscription status for user
+export async function syncSubscription(userId: string) {
+    try {
+        const lastSync = await prisma.setting.findFirst({
+            where: { key: `last_paddle_sync` },
+        });
+
+
+        //fetch all subscriptions updated after last sync time for the user
+        const subscriptionIds = await prisma.subscription.findMany({
+            where: {
+                userId,
+                updatedAt: lastSync ? { gt: lastSync.value } : undefined,
+            },
+            select: {
+                subsId: true,
+            },
+            orderBy: {
+                updatedAt: 'desc',
+            }
+        });
+
+        //if no subscription found, throw error
+        if (!subscriptionIds || subscriptionIds.length === 0) {
+            throw new Error('No subscription found to sync.');
+        }
+
+        const filteredSubsIds = subscriptionIds
+            .map(s => s.subsId)
+            .filter((id): id is string => typeof id === 'string');
+
+        if (filteredSubsIds.length === 0) {
+            throw new Error('No valid Paddle subscription IDs found');
+        };
+
+        console.log('Filtered Paddle subscription IDs: ', filteredSubsIds);
+
+        const subsCollection: SubscriptionCollection = paddleServer.subscriptions.list({
+            id: filteredSubsIds,
+        });
+
+        const updateTasks = [];
+
+        for await (const sub of subsCollection) {
+            updateTasks.push(
+                prisma.subscription.update({
+                    where: { subsId: sub.id },
+                    data: {
+                        status: sub.status,
+                        billingCycle: sub.billingCycle ? {
+                            interval: sub.billingCycle.interval,
+                            frequency: sub.billingCycle.frequency,
+                        } : null,
+                        currencyCode: sub.currencyCode,
+                        nextBilledAt: sub.nextBilledAt,
+                        billingPeriod: sub.currentBillingPeriod ? {
+                            startsAt: sub.currentBillingPeriod?.startsAt,
+                            endsAt: sub.currentBillingPeriod?.endsAt,
+                        } : null,
+                        pausedAt: sub.pausedAt,
+                        canceledAt: sub.canceledAt,
+                        scheduledChange: sub.scheduledChange ? {
+                            ...sub.scheduledChange,
+                        } : null
+                    }
+                })
+            )
+        };
+
+        if (updateTasks.length > 0) {
+            await prisma.$transaction(updateTasks);
+        }
+
+        //update the last sync time
+        await prisma.setting.upsert({
+            where: { key: `last_paddle_sync` },
+            update: { value: new Date().toISOString() },
+            create: { key: `last_paddle_sync`, value: new Date().toISOString() },
+        });
+
+        revalidatePath('/dashboard/account');
+
+        return {
+            success: true,
+            message: 'Subscription synced successfully',
+            data: subsCollection,
+        }
+
+    } catch (error: any) {
+        console.log('Error in syncSubscription: ', error.message);
+
+        return {
+            success: false,
+            message: error.message,
+        }
     }
 }
