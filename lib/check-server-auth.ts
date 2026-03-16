@@ -2,6 +2,14 @@
 
 import { headers } from 'next/headers';
 import { auth, User } from './auth';
+import prisma from './prisma';
+
+const defaultState = {
+    authenticated: false,
+    user: undefined,
+    isPro: false
+}
+
 async function isServerAuthenticated() {
     try {
         //confirm user is authenticated
@@ -9,43 +17,41 @@ async function isServerAuthenticated() {
             headers: await headers(),
         });
 
-        const user: User | undefined = session?.user;
+        const sessionUser: User | undefined = session?.user;
 
-        if (!user) {
-            return {
-                authenticated: false,
-                user
-            }
+        if (!sessionUser) {
+            return defaultState
         }
 
-        //check user plan
-        if (user.plan === 'pro' || user.plan === 'trial') {
-            //verify if the pro/trial subscription is still valid
-            const currentDate = new Date();
-            const isValid = user.planExpires && new Date(user.planExpires) > currentDate;
-
-            if (isValid) {
-                return {
-                    authenticated: true,
-                    user,
-                    isPro: true
+        const user = await prisma.user.findUnique({
+            where: { id: sessionUser.id },
+            include: {
+                subscriptions: {
+                    where: {
+                        status: { in: ['paid', 'active', 'past_due', 'trialing'] }
+                    },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1
                 }
             }
+        });
+
+        if (!user) {
+            return defaultState;
         }
+
+        const userSubscription = user.subscriptions?.[0];
+        const isPro = userSubscription
 
         return {
             authenticated: true,
             user,
-            isPro: false
-        };
+            isPro
+        }
     } catch (error: any) {
         console.error("Error checking authentication:", error?.message);
-        return {
-            authenticated: false,
-            user: undefined
-        };
+        return defaultState
     }
-
 }
 
 export default isServerAuthenticated;
