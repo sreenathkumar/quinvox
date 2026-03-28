@@ -42,7 +42,14 @@ function BuyPlanBtn({ name }: { name?: string }) {
                     }
                 })
             } else {
-                const res = await subscribeToFree(user.id);
+                const confirmed = window.confirm('Are you sure you want to switch to the free plan? This will cancel your current subscription and you will lose access to pro features.');
+
+                if (!confirmed) {
+                    return;
+                }
+
+                // Call the subscribeToFree action to update the user's subscription
+                const res = await subscribeToFree();
 
                 if (res && res.success) {
                     toast({
