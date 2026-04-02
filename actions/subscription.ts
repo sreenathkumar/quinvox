@@ -65,7 +65,7 @@ export async function subscribeToPlan({ name, playType }: { name: string, playTy
 
         if (name === 'free') {
             console.log('free plan selected');
-            const res = await subscribeToFree(user.id);
+            const res = await subscribeToFree();
 
             if (res) {
                 return {
@@ -123,26 +123,59 @@ export async function subscribeToPlan({ name, playType }: { name: string, playTy
 }
 
 //function to downgrade user to free plan
-export async function subscribeToFree(userId: string) {
+export async function subscribeToFree() {
     try {
-        //update the subscription 
-        const res = await prisma.user.update({
-            where: { id: userId },
-            data: {
-                plan: 'free',
-                status: 'none',
-                planExpires: null,
-            }
-        });
+        const { authenticated, user } = await isServerAuthenticated();
 
-        if (!res) {
-            throw new Error('Failed to subscribe to free plan');
+        if (!authenticated || !user) {
+            return {
+                success: false,
+                error: "User is not authenticated",
+            }
         }
 
-        return {
-            success: true,
-            message: 'Successfully subscribed to free plan',
-        };
+        const activeSubscription = user.subscriptions.find(sub => sub.status === 'active' || sub.status === 'trialing');
+
+        //if no active subscription, just update the user plan to free
+        if (!activeSubscription) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    plan: 'free',
+                    status: 'active',
+                    currentSubscription: null,
+                    planExpires: null,
+                }
+            });
+
+            return {
+                success: true,
+                message: 'Successfully subscribed to free plan',
+            }
+        } else {
+            //check if active subscription is same as the current subscription in user table, 
+            const isCurrentSub = user.currentSubscription === activeSubscription.id;
+
+            if (isCurrentSub && user.currentSubscription) {
+                //update the subscription 
+                const res = await paddleServer.subscriptions.cancel(user.currentSubscription, {
+                    effectiveFrom: 'next_billing_period'
+                })
+
+                if (!res) {
+                    throw new Error('Failed to subscribe to free plan');
+                }
+
+                return {
+                    success: true,
+                    message: 'Successfully subscribed to free plan',
+                };
+            } else {
+                throw new Error('Active subscription not found for the user, please contact support for assistance');
+            }
+        }
+
+
     } catch (error: any) {
         console.log('Error in subscribeToFree: ', error.message);
         return {
@@ -171,6 +204,17 @@ async function subscribeToTrial({ user }: { user: User }) {
 
 //function return the price id based on the plan type
 export async function getPriceId(userId: string, isAnnual: boolean) {
+    const monthlyWithTrial = process.env.PADDLE_MONTHLY_TRIAL_PRICE_ID!;
+    const annualWithTrial = process.env.PADDLE_YEARLY_TRIAL_PRICE_ID!;
+    const monthlyWithoutTrial = process.env.PADDLE_MONTHLY_PRICE_ID!;
+    const annualWithoutTrial = process.env.PADDLE_YEARLY_PRICE_ID!;
+
+    if (!monthlyWithTrial || !annualWithTrial || !monthlyWithoutTrial || !annualWithoutTrial) {
+        return {
+            error: 'Paddle price IDs are not properly configured.'
+        }
+    }
+
     try {
         //fetch the price id from database based on the plan type
         const user = await prisma.user.findUnique({
@@ -184,14 +228,21 @@ export async function getPriceId(userId: string, isAnnual: boolean) {
             throw new Error('User not found');
         }
 
+        // if user has active or trialing subscription, throw error to prevent multiple subscriptions
+        const activeSubscription = user.subscriptions.find(sub => sub.status === 'active' || sub.status === 'trialing');
+
+        if (activeSubscription) {
+            throw new Error('User already has an active subscription');
+        }
+
         if (user.subscriptions.length > 0 && user.trialUsed) {
             return {
-                priceId: isAnnual ? 'pri_01kjx2dkwfpc3p020sc36twnsa' : 'pri_01kjx2c7cbxd58f27bvj81472h',
+                priceId: isAnnual ? annualWithoutTrial : monthlyWithoutTrial,
             }
         }
 
         return {
-            priceId: isAnnual ? 'pri_01khe842bt4fyvcn3dn46evs3r' : 'pri_01khe82vxa83bc24md9ts8yhkq'
+            priceId: isAnnual ? annualWithTrial : monthlyWithTrial,
         }
 
     } catch (error: any) {
