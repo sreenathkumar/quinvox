@@ -204,6 +204,17 @@ async function subscribeToTrial({ user }: { user: User }) {
 
 //function return the price id based on the plan type
 export async function getPriceId(userId: string, isAnnual: boolean) {
+    const monthlyWithTrial = process.env.PADDLE_MONTHLY_TRIAL_PRICE_ID!;
+    const annualWithTrial = process.env.PADDLE_YEARLY_TRIAL_PRICE_ID!;
+    const monthlyWithoutTrial = process.env.PADDLE_MONTHLY_PRICE_ID!;
+    const annualWithoutTrial = process.env.PADDLE_YEARLY_PRICE_ID!;
+
+    if (!monthlyWithTrial || !annualWithTrial || !monthlyWithoutTrial || !annualWithoutTrial) {
+        return {
+            error: 'Paddle price IDs are not properly configured.'
+        }
+    }
+
     try {
         //fetch the price id from database based on the plan type
         const user = await prisma.user.findUnique({
@@ -226,12 +237,12 @@ export async function getPriceId(userId: string, isAnnual: boolean) {
 
         if (user.subscriptions.length > 0 && user.trialUsed) {
             return {
-                priceId: isAnnual ? 'pri_01kjx2dkwfpc3p020sc36twnsa' : 'pri_01kjx2c7cbxd58f27bvj81472h',
+                priceId: isAnnual ? annualWithoutTrial : monthlyWithoutTrial,
             }
         }
 
         return {
-            priceId: isAnnual ? 'pri_01khe842bt4fyvcn3dn46evs3r' : 'pri_01khe82vxa83bc24md9ts8yhkq'
+            priceId: isAnnual ? annualWithTrial : monthlyWithTrial,
         }
 
     } catch (error: any) {
